@@ -77,6 +77,8 @@ export function suggestions(posts: ContentPost[], tasks: StudioTask[], proc: Pro
 }
 
 export const mine = (t: StudioTask, email: string) => taskOwner(t) === email.toLowerCase();
+/** Foco do utilizador: as suas tarefas e as que ainda não têm responsável (alguém tem de as pegar). */
+export const mineOrOpen = (t: StudioTask, email: string) => !taskOwner(t) || mine(t, email);
 
 // ---------- Planeamento automático (modelos "Planear hoje / amanhã / semana") ----------
 export type PlanRange = "today" | "tomorrow" | "week";
