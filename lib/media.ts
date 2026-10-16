@@ -244,7 +244,7 @@ export async function uploadMedia(input: File, proposalId: string, onProgress?: 
   if (supabaseEnabled && kind === "video" && file.size > SUPABASE_SAFE) {
     const { optimizeVideo } = await import("./videoOptimize");
     const r = await optimizeVideo(file, SUPABASE_TARGET, (p) => onProgress?.({ loaded: Math.round(p * 1000), total: 1000, phase: "optimize" }));
-    if ("error" in r) throw new Error(r.error === "too_long" ? "too_long_free" : "too_large");
+    if ("error" in r) throw new Error(r.error === "too_long" ? "too_long_free" : r.error === "stalled" ? "optimize_stalled" : "too_large");
     file = r.file;
     if (file.size > SUPABASE_SAFE) throw new Error("too_large");
   }

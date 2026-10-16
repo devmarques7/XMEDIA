@@ -94,6 +94,19 @@ export function inviteEmail(o: { lang: Lang; name: string; inviter: string; link
   return { subject, text, html };
 }
 
+const DEFAULT_FROM = "MediaMarques <contact@mediamarques.com>"; // domínio verificado no Resend
+/**
+ * Remetente para a Resend, que só aceita "email@dominio" ou "Nome <email@dominio>".
+ * INVITE_FROM só com o nome (ex.: "MediaMarques Studio") → usa esse nome com o endereço por omissão.
+ */
+export function senderFrom(raw = process.env.INVITE_FROM) {
+  const v = (raw ?? "").trim();
+  if (!v) return DEFAULT_FROM;
+  if (/^[^<>]*<\s*[^@\s<>]+@[^@\s<>]+\.[^@\s<>]+\s*>$/.test(v) || /^[^@\s<>]+@[^@\s<>]+\.[^@\s<>]+$/.test(v)) return v;
+  const name = v.replace(/[<>"]/g, "").trim();
+  return name ? `${name} <${DEFAULT_FROM.match(/<(.+)>/)![1]}>` : DEFAULT_FROM;
+}
+
 /** Envia pela Resend (RESEND_API_KEY). Sem chave devolve false e a app mostra o link para partilhar. */
 export async function sendEmail(to: string, mail: { subject: string; text: string; html: string }, opts: { cc?: string[]; replyTo?: string } = {}) {
   const key = process.env.RESEND_API_KEY;
@@ -102,7 +115,7 @@ export async function sendEmail(to: string, mail: { subject: string; text: strin
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from: process.env.INVITE_FROM || "MediaMarques <contact@mediamarques.com>", // domínio verificado no Resend
+      from: senderFrom(),
       to: [to],
       ...(opts.cc?.length ? { cc: opts.cc } : {}),
       ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),

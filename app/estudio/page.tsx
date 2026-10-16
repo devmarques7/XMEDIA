@@ -49,7 +49,7 @@ export default function StudioPage() {
   // rascunhos sem cliente: ficam nas definições (sem lixo próprio — pergunta antes de apagar)
   const removeAny = (p: ContentPost) => {
     if (p.customer_id !== LOOSE) return trash.remove(p);
-    if (!isEmptyPost(p) && !confirm(t("loose.deleteAsk"))) return;
+    if (!isEmptyPost(p) && !window.confirm(t("loose.deleteAsk"))) return;
     flyToBin(p.id);
     S.patchSettings({ loose_drafts: (S.settings.loose_drafts ?? []).filter((x) => x.id !== p.id) });
     setEditing(null);

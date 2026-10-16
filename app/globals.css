@@ -3137,7 +3137,7 @@ input.sg-fld { text-align: left; outline: none; }
 .igp { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--bg); }
 .igp-head { display: flex; align-items: center; gap: 10px; padding: 10px 12px; font-size: 14px; }
 .igp-head b { flex: 1; font-weight: 600; }
-.igp-media { position: relative; aspect-ratio: 4/5; background: #000; display: grid; place-items: center; overflow: hidden; }
+.igp-media { position: relative; width: 100%; aspect-ratio: 4/5; background: #000; display: grid; place-items: center; overflow: hidden; }
 .igp-media.tall { aspect-ratio: 9/16; max-height: 560px; }
 .igp-media img, .igp-media .cv, .igp-media .igp-fill, .igp-media video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .igp-empty { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px; text-align: center; }
