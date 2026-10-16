@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/ui";
+import { RecentChanges } from "@/components/RecentChanges";
 import { useT } from "@/lib/i18n";
 import { store } from "@/lib/store";
 import type { VersionMeta } from "@/lib/types";
@@ -36,6 +37,7 @@ export default function HistoryPage() {
         </div>
         <div className="display">{versions ? pad(versions.length) : "··"}</div>
       </section>
+      <RecentChanges />
       {err && <p className="tone-danger">{err}</p>}
       {versions?.length === 0 && <p className="muted">{t("hs.empty")}</p>}
 

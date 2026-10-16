@@ -16,6 +16,7 @@ import { Cover, StatusLabel, TypeIcon, Video, useWhen } from "./parts";
 import { Review } from "./Review";
 import { IgPreview } from "./IgPreview";
 import { ReviewRequest } from "./ReviewRequest";
+import { VersionHistory } from "@/components/VersionHistory";
 
 const toInput = (iso: string) => {
   if (!iso) return "";
@@ -208,6 +209,7 @@ export function PostEditor({
               <Icon name={p.internal ? "lock" : "eye"} size={13} /> {p.internal ? t("pe.internal") : t("pe.visible")}
             </button>
             <StatusLabel status={p.status} />
+            <VersionHistory entity="post" id={p.id} />
             <button className="btn ghost" onClick={onClose} aria-label={t("ct.close")}>
               <Icon name="close" />
             </button>

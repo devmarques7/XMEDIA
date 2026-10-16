@@ -7,6 +7,9 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AiChat } from "./AiChat";
+import { UndoControl } from "./UndoControl";
+import { installJournal } from "@/lib/journal";
+
 import { Icon, type IconName } from "./Icon";
 import { Logo } from "./Logo";
 import { Avatar, useTheme, useUser } from "./ui";
@@ -23,6 +26,9 @@ import { isLocalMode, store } from "@/lib/store";
 import { supabase, supabaseEnabled } from "@/lib/supabase/client";
 import { serviceStore } from "@/lib/serviceStore";
 import { team } from "@/lib/team";
+
+// desfazer + histórico de versões: envolve os stores antes de qualquer ecrã ler ou gravar
+installJournal();
 
 type Item = { href: string; key: Key; icon: IconName };
 const GROUPS: { key: Key; items: Item[] }[] = [
@@ -178,6 +184,7 @@ export function Header({ left, right, onMenu }: { left?: React.ReactNode; right?
       <KpiBar />
       <div className="row" style={{ gap: 8, flexWrap: "nowrap" }}>
         <GlobalSearch />
+        <UndoControl />
         {right}
         {isLocalMode && (
           <span className="label tone-warn hide-sm" title={t("localModeHint")}>

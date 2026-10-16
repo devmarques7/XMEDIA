@@ -53,6 +53,7 @@ import { LANGS, useT, type Key } from "@/lib/i18n";
 import { uploadMedia } from "@/lib/media";
 import { ApiError, portalApi, type IntegrationStatus } from "@/lib/portalApi";
 import { isoDay } from "@/lib/util";
+import { VersionHistory } from "@/components/VersionHistory";
 
 type Tab = "portal" | "documents" | "overview" | "content" | "calendar" | "tasks" | "brand" | "inspiration" | "process" | "grid" | "metrics" | "access" | "bin";
 const TABS: Tab[] = ["portal", "overview", "content", "calendar", "tasks", "brand", "inspiration", "documents", "process", "grid", "metrics", "access", "bin"];
@@ -238,6 +239,7 @@ function CustomerPage() {
               </option>
             ))}
           </Select>
+          <VersionHistory entity="customer" id={c.id} className="btn" />
           <button className="btn accent" onClick={() => setInviting(true)} data-testid="cu-invite">
             + {t("iv.cta")}
           </button>
