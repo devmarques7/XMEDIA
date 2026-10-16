@@ -151,7 +151,7 @@ export function ContentCalendar({ posts, onOpen, onDay }: { posts: ContentPost[]
 }
 
 /** Pré-visualização do perfil do Instagram com os planeados no topo (capas 3:4). */
-export function GridPreview({ customer, posts, onOpen }: { customer: Pick<Customer, "name" | "instagram">; posts: ContentPost[]; onOpen?: (p: ContentPost) => void }) {
+export function GridPreview({ customer, posts, onOpen, onCover }: { customer: Pick<Customer, "name" | "instagram">; posts: ContentPost[]; onOpen?: (p: ContentPost) => void; /** Trocar a capa de um reel planeado (imagem escolhida). */ onCover?: (p: ContentPost, file: File) => Promise<void> }) {
   const { t, locale } = useT();
   const ig = customer.instagram;
   const items = useMemo(() => gridItems(posts, ig.media ?? []), [posts, ig.media]);
@@ -183,22 +183,7 @@ export function GridPreview({ customer, posts, onOpen }: { customer: Pick<Custom
       <p className="muted small">{t("gr.hint")}</p>
       <div className="igp-grid">
         {items.map((it: GridItem) => (
-          <button
-            key={it.key}
-            className={`igp-cell ${it.planned ? "planned" : ""}`}
-            onClick={() => (it.post ? onOpen?.(it.post) : it.ig?.permalink && window.open(it.ig.permalink, "_blank", "noopener"))}
-            title={it.post?.title || it.ig?.caption?.slice(0, 80) || ""}
-          >
-            <Cover src={it.cover} />
-            <span className="igp-icon">
-              <TypeIcon type={it.type === "ig" ? (it.ig?.product === "REELS" ? "reel" : it.ig?.media_type === "CAROUSEL_ALBUM" ? "carousel" : "post") : it.type} />
-            </span>
-            {it.planned && (
-              <span className="igp-badge">
-                <Icon name="clock" size={11} /> {it.when ? new Date(it.when).toLocaleDateString(locale, { day: "2-digit", month: "short" }) : t("gr.planned")}
-              </span>
-            )}
-          </button>
+          <GridCell key={it.key} it={it} onOpen={onOpen} onCover={onCover} />
         ))}
         {/* completa a última linha */}
         {Array.from({ length: (3 - (items.length % 3)) % 3 }, (_, i) => (
@@ -206,6 +191,75 @@ export function GridPreview({ customer, posts, onOpen }: { customer: Pick<Custom
         ))}
       </div>
     </section>
+  );
+}
+
+/**
+ * Célula do grid como no perfil do Instagram (3:4, sem bordas). Ao passar o rato: camada escura com "Abrir conteúdo" e,
+ * nos reels planeados, "Alterar capa" (no Instagram só os reels têm capa própria; posts/carrosséis usam a 1.ª imagem).
+ */
+function GridCell({ it, onOpen, onCover }: { it: GridItem; onOpen?: (p: ContentPost) => void; onCover?: (p: ContentPost, file: File) => Promise<void> }) {
+  const { t, locale } = useT();
+  const file = useRef<HTMLInputElement>(null);
+  const [busy, setBusy] = useState(false);
+  const video = !it.cover && it.post ? it.post.media.find((m) => m.kind === "video")?.src : undefined;
+  const videoUrl = useMediaSrc(video);
+  const frame = useVideoPoster(videoUrl); // reel sem capa: frame do meio
+  const canCover = !!(it.post && onCover && it.post.type === "reel" && it.post.status !== "published");
+  const open = () => (it.post ? onOpen?.(it.post) : it.ig?.permalink && window.open(it.ig.permalink, "_blank", "noopener"));
+  const kind = it.type === "ig" ? (it.ig?.product === "REELS" ? "reel" : it.ig?.media_type === "CAROUSEL_ALBUM" ? "carousel" : "post") : it.type;
+  return (
+    <div className={`igp-cell ${it.planned ? "planned" : ""} ${busy ? "busy" : ""}`} data-testid="igp-cell">
+      <button className="igp-hit" onClick={open} title={it.post?.title || it.ig?.caption?.slice(0, 80) || ""} aria-label={it.post?.title || t("gr.open")}>
+        {it.cover ? (
+          <Cover src={it.cover} />
+        ) : frame ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={frame} alt="" />
+        ) : (
+          <span className="cv-empty" aria-hidden />
+        )}
+      </button>
+      {kind !== "post" && (
+        <span className="igp-icon" aria-hidden>
+          <TypeIcon type={kind} />
+        </span>
+      )}
+      {it.planned && (
+        <span className="igp-badge">
+          <Icon name="clock" size={11} /> {it.when ? new Date(it.when).toLocaleDateString(locale, { day: "2-digit", month: "short" }) : t("gr.planned")}
+        </span>
+      )}
+      <div className="igp-over">
+        <button className="igp-act" onClick={open} data-testid="igp-open">
+          <Icon name={it.post ? "edit" : "instagram"} size={14} /> {it.post ? t("gr.open") : t("gr.viewIg")}
+        </button>
+        {canCover && (
+          <button className="igp-act" onClick={() => file.current?.click()} disabled={busy} data-testid="igp-cover">
+            <Icon name="image" size={14} /> {busy ? "…" : t("gr.changeCover")}
+          </button>
+        )}
+      </div>
+      {canCover && (
+        <input
+          ref={file}
+          type="file"
+          accept="image/*"
+          hidden
+          onChange={async (e) => {
+            const f = e.target.files?.[0];
+            e.target.value = "";
+            if (!f || !it.post) return;
+            setBusy(true);
+            try {
+              await onCover!(it.post, f);
+            } finally {
+              setBusy(false);
+            }
+          }}
+        />
+      )}
+    </div>
   );
 }
 
