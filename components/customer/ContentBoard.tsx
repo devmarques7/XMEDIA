@@ -15,6 +15,7 @@ import { thumbOf, POST_TYPES, liveNotes, openNotes, phaseOf, type ContentPost, t
 import { validationState } from "@/lib/validation";
 import { useT, type Key } from "@/lib/i18n";
 import { useMediaSrc } from "@/lib/media";
+import { useVideoPoster } from "@/lib/videoPoster";
 import { Cover, StatusLabel, TypeIcon } from "./parts";
 
 export const BOARD_COLS: Exclude<Phase, "blocked">[] = ["idea", "editing", "client_review", "changes", "approved", "scheduled", "published"];
@@ -331,13 +332,14 @@ function OwnerChip({ email }: { email?: string }) {
 function HoverVideo({ src, poster }: { src: string; poster?: string }) {
   const url = useMediaSrc(src);
   const posterUrl = useMediaSrc(poster);
+  const shown = useVideoPoster(url, posterUrl); // sem capa: frame do meio do vídeo
   const ref = useRef<HTMLVideoElement>(null);
   if (!url) return <Cover src={poster} />;
   return (
     <StreamVideo
       ref={ref}
       src={url}
-      poster={posterUrl || undefined}
+      poster={shown}
       muted
       loop
       playsInline

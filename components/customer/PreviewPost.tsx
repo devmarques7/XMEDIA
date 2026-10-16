@@ -6,7 +6,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { bestTimes, SLOTS } from "@/lib/bestTimes";
-import { applyCoverRule, addNote, clientReview, moveToPhase, patchNote, type ContentPost, type Instagram } from "@/lib/customer";
+import { applyCoverRule, addNote, hasCover, clientReview, moveToPhase, patchNote, type ContentPost, type Instagram } from "@/lib/customer";
 import type { Media } from "@/lib/proposal";
 import { useT, type Key } from "@/lib/i18n";
 import { fileToDataUrl } from "@/lib/inspirationClient";
@@ -111,7 +111,7 @@ export function PreviewPost({ post, ig, as, onChange, onClose }: { post: Content
                 >
                   <span className="pvp-img">
                     {m.kind === "video" ? (
-                      <Video src={m.src} />
+                      <Video src={m.src} poster={hasCover(p.type) ? p.cover : undefined} />
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
                       <Cover src={m.src} />

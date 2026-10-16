@@ -28,7 +28,7 @@ export type EmailBlock = {
 export const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
 export function emailLayout(o: EmailBlock) {
-  const header = `${o.origin}/api/email/header?label=${encodeURIComponent(o.label)}`;
+  const header = `${o.origin}/api/email/header?label=${encodeURIComponent(o.label)}&v=2`;
   const rows = o.rows ?? [];
   const row = (k: string, v: string, strong = false) =>
     `<tr><td style="padding:10px 0;border-top:1px solid #ececec;font-size:13px;color:#8a8a8a;vertical-align:top">${esc(k)}</td><td align="right" style="padding:10px 0 10px 12px;border-top:1px solid #ececec;font-size:14px;color:#111;${strong ? "font-weight:600" : ""}">${esc(v).replace(/\n/g, "<br>")}</td></tr>`;

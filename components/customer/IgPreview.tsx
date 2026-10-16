@@ -4,7 +4,7 @@
 // com "mais". Reels e stories em 9:16; posts e carrosséis em 4:5 — como aparecem no feed.
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
-import type { ContentPost } from "@/lib/customer";
+import { hasCover, type ContentPost } from "@/lib/customer";
 import { useT } from "@/lib/i18n";
 import { Avatar } from "@/components/team/Avatar";
 import { Cover, Video } from "./parts";
@@ -33,7 +33,7 @@ export function IgPreview({ post, handle, picture }: { post: Pick<ContentPost, "
             {t("igp.empty")}
           </span>
         ) : cur.kind === "video" ? (
-          <Video src={cur.src} className="igp-fill" />
+          <Video src={cur.src} className="igp-fill" poster={hasCover(post.type) ? post.cover : undefined} />
         ) : (
           <Cover src={cur.src} />
         )}

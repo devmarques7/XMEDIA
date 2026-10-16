@@ -9,9 +9,9 @@ import { Icon } from "@/components/Icon";
 import { Select } from "@/components/Select";
 import { Avatar } from "@/components/team/Avatar";
 import { BoardCard } from "@/components/customer/ContentBoard";
-import { Cover, StatusLabel, TypeIcon } from "@/components/customer/parts";
+import { PostThumb, StatusLabel, TypeIcon } from "@/components/customer/parts";
 import type { useStudio } from "@/components/team/useStudio";
-import { LOOSE, POST_TYPES, assignLoose, emptyPost, phaseOf, thumbOf, deadline, type ContentPost, type Customer, type Phase, type PostType } from "@/lib/customer";
+import { LOOSE, POST_TYPES, assignLoose, emptyPost, phaseOf, deadline, type ContentPost, type Customer, type Phase, type PostType } from "@/lib/customer";
 import { customerStore } from "@/lib/customerStore";
 import { useT, type Key } from "@/lib/i18n";
 
@@ -329,7 +329,7 @@ function Campaign({ posts, onOpen, clientName }: { posts: ContentPost[]; onOpen:
                 {items.map((p) => (
                   <button key={p.id} className="st-camp-item" onClick={() => onOpen(p)} title={p.title} data-post-card={p.id}>
                     <span className="st-camp-th">
-                      <Cover src={thumbOf(p)} />
+                      <PostThumb p={p} />
                     </span>
                     <span className="st-camp-t">
                       {p.title || t(`ct.type.${p.type}` as Key)}
@@ -362,7 +362,7 @@ function MatTable({ items, isLoose, cust, onEdit, onDelete, assign, looseActions
       {[...items].sort((a, b) => POST_TYPES.indexOf(a.type) - POST_TYPES.indexOf(b.type)).map((p) => (
         <div key={p.id} className="st-mrow" role="row" data-post-card={p.id} tabIndex={0} onKeyDown={(e) => (e.key === "Enter" ? onEdit(p) : (e.key === "Delete" || e.key === "Backspace") && e.target === e.currentTarget && (e.preventDefault(), onDelete(p)))} data-testid="st-mrow">
           <button className="st-mthumb" onClick={() => onEdit(p)} aria-label={t("ct.edit")}>
-            <Cover src={thumbOf(p)} />
+            <PostThumb p={p} />
           </button>
           <button className="st-mtitle" onClick={() => onEdit(p)}>
             <b>{p.title || t(`ct.type.${p.type}` as Key)}</b>

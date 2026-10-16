@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Bars, Dots, Ring, Tile, TileLines } from "@/components/bento";
-import { Cover } from "@/components/customer/parts";
+import { PostThumb } from "@/components/customer/parts";
 import { Icon } from "@/components/Icon";
 import { ImportDialog } from "@/components/ImportDialog";
 import { ProjectsTable } from "@/components/ProjectsTable";
@@ -396,7 +396,7 @@ function Bento({ pct, done, total, focus, reels, kd, crm, span, setSpan }: Bento
   const posts = crm?.posts ?? [];
   const live = posts.filter((p) => phaseOf(p) !== "published");
   const withClient = live.filter((p) => phaseOf(p) === "client_review").length;
-  const recent = [...posts].filter((p) => thumbOf(p)).sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? "")).slice(0, 6);
+  const recent = [...posts].filter((p) => thumbOf(p) || p.media.some((m) => m.kind === "video")).sort((a, b) => (b.updated_at ?? "").localeCompare(a.updated_at ?? "")).slice(0, 6);
   const fb = crm ? collect(crm.customers) : null;
   const sum = fb ? summarize(fb.responses, fb.sent) : null;
   const weak = sum?.weak ?? [];
@@ -472,7 +472,7 @@ function Bento({ pct, done, total, focus, reels, kd, crm, span, setSpan }: Bento
             {recent.length
               ? recent.map((p) => (
                   <Link key={p.id} href={`/clientes/${p.customer_id}?tab=content&post=${p.id}`} title={p.title}>
-                    <Cover src={thumbOf(p)} />
+                    <PostThumb p={p} />
                   </Link>
                 ))
               : Array.from({ length: 6 }, (_, i) => <span key={i} />)}

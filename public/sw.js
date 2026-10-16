@@ -1,5 +1,5 @@
 // XMEDIA service worker: app instalável + abre offline com a última versão vista.
-const CACHE = "xmedia-v1";
+const CACHE = "xmedia-v2"; // v2: logo novo
 self.addEventListener("install", () => self.skipWaiting());
 self.addEventListener("activate", (e) =>
   e.waitUntil(
