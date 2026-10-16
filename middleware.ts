@@ -9,7 +9,9 @@ const PUBLIC = ["/login", "/auth", "/tutorial", "/manifest.webmanifest", "/sw.js
   // guia de configuração (só mostra sim/não)
   "/setup", "/api/health", "/api/version", "/api/email/header", "/api/appearance",
   // callbacks da Meta (pedido assinado com o app secret)
-  "/api/instagram"];
+  "/api/instagram",
+  // MCP com login (OAuth): descoberta, registo, token e o ecrã de autorização (que trata o login sozinho)
+  "/.well-known", "/api/oauth", "/oauth"];
 // área do funcionário (sessão por código de série, não Supabase Auth)
 const MEMBER_AREA = ["/eu", "/api/member"];
 // portal do cliente (sessão própria, cookie xm_client)

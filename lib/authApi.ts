@@ -7,7 +7,7 @@ import { ApiError, memberApi } from "./memberApi";
 import { portalApi } from "./portalApi";
 import { supabaseEnabled } from "./supabase/client";
 
-export type LoginResult = { to: string; lang?: Lang; name?: string };
+export type LoginResult = { to: string; lang?: Lang; name?: string; role?: "admin" | "member" | "client" };
 
 export async function passcodeLogin(email: string, code: string): Promise<LoginResult> {
   if (supabaseEnabled) {

@@ -9,10 +9,21 @@ import { allTasks, taskOwner, type StudioTask } from "../studio";
 import { COMPANY, suggestions, todayTasks } from "../today";
 import { splitChecklist, validationState } from "../validation";
 import { applyClientJson } from "../clientJson";
+import { DraftError, buildDrafts, customerBrief, draftLines, matchCustomers, pickCustomer } from "../contentDrafts";
+import { applyChangeRequests, changeLines, matchPosts, pickPost, splitChanges } from "../changeRequests";
 
 type Json = Record<string, unknown>;
 
 export async function runClientTool(name: string, a: Json, db: SupabaseClient, owner: string): Promise<string> {
+  try {
+    return await run(name, a, db, owner);
+  } catch (e) {
+    if (e instanceof DraftError) throw new ToolInputError(e.message); // o modelo corrige e tenta de novo
+    throw e;
+  }
+}
+
+async function run(name: string, a: Json, db: SupabaseClient, owner: string): Promise<string> {
   const customers = async () => {
     const { data, error } = await db.from("customers").select("id, data").eq("owner_id", owner);
     if (error) throw error;
@@ -44,7 +55,7 @@ export async function runClientTool(name: string, a: Json, db: SupabaseClient, o
   };
   const savePost = async (p: ContentPost) => {
     const { created_at: _c, updated_at: _u, ...doc } = p;
-    const { error } = await db.from("customer_posts").upsert({ id: p.id, customer_id: p.customer_id, status: p.status, scheduled_at: p.scheduled_at || null, data: doc });
+    const { error } = await db.from("customer_posts").upsert({ id: p.id, owner_id: owner, customer_id: p.customer_id, status: p.status, scheduled_at: p.scheduled_at || null, data: doc });
     if (error) throw error;
   };
   const brief = (p: ContentPost, c: Customer) => {
@@ -176,6 +187,32 @@ export async function runClientTool(name: string, a: Json, db: SupabaseClient, o
       const t = patch(c.tasks!.find((x) => x.id === id)!);
       await saveCustomer({ ...c, tasks: mergeTasks(c.tasks, [t]) });
       return JSON.stringify({ ok: true, task: { id, title: t.title, done: t.done, due: t.due, customer: c.name } });
+    }
+    // ---- skill "rascunhos de conteúdo" (lib/ai/contentSkill.ts)
+    case "find_customers": {
+      const all = await customers();
+      const ps = all.length ? await allPosts() : [];
+      return JSON.stringify(matchCustomers(all, a.query).slice(0, 30).map((c) => ({ id: c.id, name: c.name, kind: c.kind ?? "company", contact: c.contact, lang: c.lang, posts: ps.filter((p) => p.customer_id === c.id).length })));
+    }
+    case "get_customer_brief": {
+      const c = pickCustomer(await customers(), a.customer);
+      return JSON.stringify(customerBrief(c, await posts(c.id)));
+    }
+    case "create_content_drafts": {
+      const c = pickCustomer(await customers(), a.customer);
+      const created = buildDrafts(c, a.drafts);
+      for (const p of created) await savePost(p);
+      return JSON.stringify({ ok: true, summary: draftLines(c.name, created), created: created.map((p) => ({ id: p.id, type: p.type, title: p.title, scheduled_at: p.scheduled_at || undefined })) });
+    }
+    case "find_content": {
+      const hits = matchPosts(await allPosts(), await customers(), a.query, a.customer);
+      return JSON.stringify(hits.slice(0, 15).map(({ post: p, customer: c }) => ({ id: p.id, title: p.title, customer: c.name, type: p.type, status: p.status, round: p.round, open_comments: openNotes(p).length })));
+    }
+    case "log_change_requests": {
+      const hit = pickPost(await allPosts(), await customers(), a.content, a.customer);
+      const r = applyChangeRequests(hit.post, { changes: a.changes, from: String(a.from ?? ""), source: String(a.source ?? "") });
+      await savePost(r.post);
+      return JSON.stringify({ ok: true, summary: changeLines(hit, r, splitChanges(a.changes)), content: { id: r.post.id, status: r.post.status }, added: r.added, moved_to_changes: r.moved, open_comments: r.open });
     }
     case "import_client_json": {
       const c = await findCustomer(a.customer);

@@ -3332,3 +3332,8 @@ input.sg-fld { text-align: left; outline: none; }
 .arp-row.off { opacity: .5; }
 .arp-w { font-size: 13px; color: var(--muted); white-space: nowrap; display: inline-flex; align-items: center; gap: 4px; }
 @media (max-width: 900px) { .arp-row { grid-template-columns: 1fr 1fr; } .arp-row .arp-w { grid-column: 1 / -1; } }
+
+/* Pedir revisão (editor de conteúdo): painel por cima do botão */
+.rr-wrap { position: relative; display: inline-flex; }
+.rr-pop { position: absolute; right: 0; bottom: calc(100% + 10px); z-index: 30; width: min(360px, 86vw); display: grid; gap: 10px; padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.22); text-align: left; }
+.rr-pop label { display: grid; gap: 4px; }

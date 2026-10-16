@@ -24,6 +24,11 @@ function GoogleG() {
 }
 
 const LS_EMAIL = "xmedia:login:email";
+/** Página para onde voltar depois de entrar (ex.: autorizar o MCP); só caminhos desta app. */
+const nextPath = () => {
+  const n = new URLSearchParams(location.search).get("next") ?? "";
+  return n.startsWith("/") && !n.startsWith("//") ? n : "";
+};
 const LS_LEN = "xmedia:login:len";
 /** Tamanho do código por email (guardado depois de entrar uma vez neste dispositivo). */
 const lens = (): Record<string, number> => {
@@ -95,7 +100,7 @@ export default function Login() {
         localStorage.setItem(LS_LEN, JSON.stringify({ ...lens(), [email.trim().toLowerCase()]: c.length }));
       } catch {}
       if (r.lang) setLang(r.lang);
-      location.href = r.to;
+      location.href = (r.role === "admin" && nextPath()) || r.to;
     } catch (e) {
       setCode("");
       setErr(tErr(e));
@@ -109,7 +114,7 @@ export default function Login() {
     setBusy(true);
     const { error } = await supabase().auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${location.origin}/auth/callback`, queryParams: { prompt: "select_account" } },
+      options: { redirectTo: `${location.origin}/auth/callback${nextPath() ? `?next=${encodeURIComponent(nextPath())}` : ""}`, queryParams: { prompt: "select_account" } },
     });
     if (error) {
       setErr(error.message);

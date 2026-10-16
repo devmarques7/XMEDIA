@@ -15,6 +15,7 @@ import { applyUploads, dropOrphans, dropPending, hasPending, isPending, startUpl
 import { Cover, StatusLabel, TypeIcon, Video, useWhen } from "./parts";
 import { Review } from "./Review";
 import { IgPreview } from "./IgPreview";
+import { ReviewRequest } from "./ReviewRequest";
 
 const toInput = (iso: string) => {
   if (!iso) return "";
@@ -63,6 +64,7 @@ export function PostEditor({
   const [busy, setBusy] = useState<string | null>(null);
   const [reply, setReply] = useState("");
   const [err, setErr] = useState(() => (dropOrphans(post) !== post ? t("pe.orphanUpload") : ""));
+  const [notice, setNotice] = useState("");
   const [overAll, setOverAll] = useState(false);
   const overTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [drag, setDrag] = useState<number | null>(null);
@@ -456,6 +458,7 @@ export function PostEditor({
         )}
 
         {err && <p className="note tone-danger">{t("ct.error", { e: err })}</p>}
+        {notice && <p className="note tone-ok" data-testid="pe-notice">{notice}</p>}
         <footer className="row between pe-foot">
           <button className="btn ghost danger" onClick={() => onDelete(p)}>
             {t("fin.delete")}
@@ -478,6 +481,19 @@ export function PostEditor({
               >
                 {busy === "publish" ? "…" : t("ct.publishNow")}
               </button>
+            )}
+            {p.status !== "published" && (
+              <span className="rr-wrap">
+                <ReviewRequest
+                  post={p}
+                  disabled={!!busy || pending}
+                  beforeSend={async () => {
+                    // grava primeiro: o link do email abre a versão atual
+                    await onSave(settle(applyCoverRule({ ...p, refs: cleanRefs({ ...p.refs }) })));
+                  }}
+                  onDone={(m) => (setErr(""), setNotice(m))}
+                />
+              </span>
             )}
             {(p.status === "draft" || p.status === "idea") && (
               <button className="btn" disabled={!!busy || pending} title={pending ? t("pe.uploadingSaved") : undefined} onClick={() => save(moveToPhase(p, "client_review"))}>
