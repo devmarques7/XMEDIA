@@ -89,7 +89,7 @@ export function AppShell({ children, left, right }: { children: React.ReactNode;
         <Header left={left} right={right} onMenu={() => setDrawer(true)} />
         <main className="wrap">{access === null ? null : canOpen(access, path) ? children : <NoAccess />}</main>
       </div>
-      {access?.admin && <AiChat />}
+      {(access?.admin || access?.perms.has("ai.use")) && <AiChat />}
     </div>
   );
 }

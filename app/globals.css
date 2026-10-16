@@ -3431,3 +3431,29 @@ button.fin-tile:hover, button.fin-tile[aria-pressed="true"] { border-color: var(
 .td-focus-l b { font-size: 13px; font-weight: 600; }
 .td-video-k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
 @media (max-width: 640px) { .td-focus-l { display: none; } .td-focus { padding: 3px; } }
+
+/* Definições → Assistente IA */
+.aia { display: grid; gap: 8px; }
+.aia-row { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.aia-row.off { opacity: .6; }
+.aia-ic { width: 30px; height: 30px; border-radius: 999px; display: grid; place-items: center; background: var(--accent); color: var(--accent-ink, #fff); }
+.aia-who { display: grid; min-width: 0; }
+.aia-who > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aia-switch { display: inline-flex; align-items: center; gap: 8px; }
+.aia-switch input { width: 34px; height: 20px; accent-color: var(--accent); }
+
+/* Assistente: ícones de quem fala, linha única de "a pensar" com carregamento, botão a trabalhar/aviso */
+.aiturn { display: flex; flex-direction: column; gap: 10px; }
+.airow { display: flex; align-items: flex-end; gap: 8px; }
+.airow.user { justify-content: flex-end; }
+.airow .aimsg { max-width: calc(100% - 40px); }
+.aiav { flex: none; }
+.aiav.bot { width: 26px; height: 26px; border-radius: 999px; display: inline-grid; place-items: center; background: var(--accent); color: var(--accent-ink, #fff); font-size: 13px; }
+.aithink { display: inline-flex; align-items: center; gap: 10px; min-width: 0; max-width: calc(100% - 40px); padding: 10px 12px; border-radius: 14px; border-bottom-left-radius: 4px; background: var(--panel-2); color: var(--muted); font-size: 13px; }
+.aithink-t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aispin { width: 14px; height: 14px; flex: none; border-radius: 999px; border: 2px solid color-mix(in srgb, currentColor 25%, transparent); border-top-color: currentColor; animation: aispin .8s linear infinite; }
+@keyframes aispin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .aispin { animation-duration: 2.4s; } }
+.aifab { position: fixed; }
+.aifab-dot { position: absolute; top: 6px; right: 8px; width: 9px; height: 9px; border-radius: 999px; background: var(--fg); box-shadow: 0 0 0 2px var(--accent); }
+.aipanel-input > .aiav { align-self: center; }

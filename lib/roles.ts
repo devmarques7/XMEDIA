@@ -13,6 +13,7 @@ export const PERMS = [
   "finance.view", // finanças completas: todas as invoices, totais, BTW, estados, pagamentos
   "team.manage", // gerir team members, horas e fecho do mês (inclui valores/hora)
   "settings.manage", // definições: mensalidade, processo, integrações
+  "ai.use", // usar o assistente XMEDIA (IA): só quem o admin autorizar (Definições → Assistente IA)
 ] as const;
 export type Perm = (typeof PERMS)[number];
 
@@ -28,7 +29,7 @@ export const ROLE_PRESETS: Record<AppRole, Perm[]> = {
 };
 
 /** Permissões que só o admin deve dar conscientemente (dinheiro). */
-export const SENSITIVE: Perm[] = ["finance.view", "team.manage", "settings.manage"];
+export const SENSITIVE: Perm[] = ["finance.view", "team.manage", "settings.manage", "ai.use"];
 
 export const ALL_PERMS = new Set<Perm>(PERMS);
 export const cleanPerms = (list: unknown): Perm[] => (Array.isArray(list) ? PERMS.filter((p) => list.includes(p)) : []);
