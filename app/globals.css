@@ -3419,15 +3419,14 @@ button.fin-tile:hover, button.fin-tile[aria-pressed="true"] { border-color: var(
 .st-loose { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 6px; }
 .st-loose .select { flex: 1; min-width: 140px; font-size: 12px; }
 
-/* Hoje: avatar de foco (as minhas + sem responsável ↔ de todos) */
-.td-focus { display: inline-flex; align-items: center; gap: 10px; padding: 4px 12px 4px 4px; border: 1px solid var(--line); border-radius: 999px; background: var(--panel); color: var(--fg); font: inherit; cursor: pointer; text-align: left; }
-.td-focus:hover { border-color: var(--fg); }
-.td-focus.on { border-color: var(--accent); }
-.td-focus.on .av { box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--accent); }
-.td-focus-l { display: grid; line-height: 1.2; }
-.td-focus-l b { font-size: 13px; font-weight: 600; }
+/* Hoje: só o avatar; realce (anel laranja) só quando o foco "as minhas" está ligado; informação na tooltip */
+.td-focus { display: inline-grid; place-items: center; padding: 0; border: 0; border-radius: 999px; background: none; cursor: pointer; transition: transform .15s ease, opacity .15s ease; }
+.td-focus .av { transition: box-shadow .15s ease; }
+.td-focus:not(.on) .av { opacity: .75; }
+.td-focus:hover .av { opacity: 1; box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--fg); }
+.td-focus.on .av { opacity: 1; box-shadow: 0 0 0 2px var(--bg), 0 0 0 3.5px var(--accent); }
+.td-focus:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .td-video-k { font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
-@media (max-width: 640px) { .td-focus-l { display: none; } .td-focus { padding: 3px; } }
 
 /* Definições → Assistente IA */
 .aia { display: grid; gap: 8px; }
@@ -3492,3 +3491,12 @@ button.fin-tile:hover, button.fin-tile[aria-pressed="true"] { border-color: var(
 }
 .autotext { resize: none; overflow: hidden; line-height: 1.35; min-height: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
 .invform .span-all { grid-column: 1 / -1; }
+
+/* Tooltip (padrão shadcn/ui sobre Radix) */
+.tt { z-index: 200; display: grid; gap: 3px; max-width: 260px; padding: 8px 11px; border-radius: 8px; background: var(--fg); color: var(--bg); font-size: 12.5px; line-height: 1.35; box-shadow: 0 8px 24px rgba(0, 0, 0, .18); animation: tt-in .14s ease-out; }
+.tt b { font-weight: 600; }
+.tt-sub { opacity: .85; }
+.tt-hint { opacity: .6; font-size: 11.5px; }
+.tt-arrow { fill: var(--fg); }
+@keyframes tt-in { from { opacity: 0; transform: translateY(-2px) scale(.98); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .tt { animation: none; } }
