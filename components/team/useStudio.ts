@@ -75,7 +75,7 @@ export function useStudio(initialWeek = weekOf()) {
     await customerStore.save(next).catch((e) => setErr((e as Error).message));
   }
   async function savePost(p: ContentPost) {
-    setPosts((l) => l.map((x) => (x.id === p.id ? p : x)));
+    setPosts((l) => (l.some((x) => x.id === p.id) ? l.map((x) => (x.id === p.id ? p : x)) : [...l, p])); // novo (ex.: criado a partir de uma tarefa) entra logo
     const saved = await customerStore.savePost(p).catch((e) => (setErr((e as Error).message), null));
     // o responsável pode ter mudado por uma regra de automação
     if (saved) setPosts((l) => l.map((x) => (x.id === saved.id ? { ...x, assignee: saved.assignee } : x)));

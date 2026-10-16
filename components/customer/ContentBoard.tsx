@@ -17,6 +17,8 @@ import { useT, type Key } from "@/lib/i18n";
 import { useMediaSrc } from "@/lib/media";
 import { useVideoPoster } from "@/lib/videoPoster";
 import { Cover, StatusLabel, TypeIcon } from "./parts";
+import { WithMenu, type MenuAction } from "@/components/ContextMenu";
+import { QuickTask } from "@/components/QuickTask";
 
 export const BOARD_COLS: Exclude<Phase, "blocked">[] = ["idea", "editing", "client_review", "changes", "approved", "scheduled", "published"];
 
@@ -223,7 +225,21 @@ export function BoardCard({ p, onOpen, onDelete, drag, client, extra, className 
   const prod = ["idea", "draft"].includes(p.status) || p.blocked;
   const dues = prod ? ([["finish", p.due_finish], ["deliver", p.due_deliver]] as const).filter((x): x is readonly ["finish" | "deliver", string] => !!x[1]) : [];
   const today = new Date().toISOString().slice(0, 10);
+  const [taskOpen, setTaskOpen] = useState(false);
+  const href = `/clientes/${p.customer_id}?tab=content&post=${p.id}`;
+  const actions: MenuAction[] = [
+    { title: p.title || t(`ct.type.${p.type}` as Key) },
+    { label: t("cm.open"), icon: <Icon name="edit" size={13} />, onSelect: () => onOpen(p) },
+    { label: t("cm.newTask"), icon: <Icon name="task" size={13} />, onSelect: () => setTaskOpen(true) },
+    "sep",
+    { label: t("cm.copyLink"), icon: <Icon name="link" size={13} />, onSelect: () => navigator.clipboard.writeText(location.origin + href).catch(() => {}) },
+    { label: t("cm.openNew"), icon: <Icon name="next" size={13} />, onSelect: () => window.open(href, "_blank", "noopener") },
+    ...(onDelete ? (["sep", { label: t("cm.delete"), icon: <Icon name="trash" size={13} />, danger: true, onSelect: () => onDelete(p) }] as MenuAction[]) : []),
+  ];
   return (
+    <>
+    {taskOpen && <QuickTask customer={{ id: p.customer_id, name: clientInfo?.name ?? client ?? "" }} post={{ id: p.id, title: p.title || t(`ct.type.${p.type}` as Key) }} onClose={() => setTaskOpen(false)} onDone={() => {}} />}
+    <WithMenu actions={actions}>
     <article
       className={`cb-card ty-${p.type} ${drag ? "kb-card" : ""} ${drag?.className ?? ""} ${className}`}
       draggable={false}
@@ -303,6 +319,8 @@ export function BoardCard({ p, onOpen, onDelete, drag, client, extra, className 
         {extra}
       </div>
     </article>
+    </WithMenu>
+    </>
   );
 }
 

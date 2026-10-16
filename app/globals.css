@@ -3608,3 +3608,26 @@ tr.is-pinned td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
 .kbd-list dd { margin: 0; font-size: 14px; }
 kbd { display: inline-block; padding: 3px 8px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; background: var(--panel-2); font-family: var(--mono); font-size: 11.5px; white-space: nowrap; }
 @media (max-width: 640px) { .kbd-list div { grid-template-columns: 1fr; gap: 4px; } }
+
+/* Hoje · linha da tarefa: colunas fixas (alinhamento igual em todas as linhas) */
+.td-row { display: grid !important; grid-template-columns: auto auto minmax(0, 1fr) auto; align-items: start; column-gap: 10px; }
+.td.compact .td-row { grid-template-columns: auto minmax(0, 1fr) auto; }
+.td-lead { display: inline-flex; align-items: center; gap: 0; width: 46px; }
+.td-ph { display: inline-block; width: 22px; height: 22px; }
+.td-lead .td-grip-sort { margin-right: 0; }
+.td-main { align-items: flex-start; }
+.td-meta { flex-direction: column; align-items: flex-start; gap: 5px !important; }
+.td-alerts { display: flex; flex-wrap: wrap; gap: 6px; }
+.td-video { max-width: min(320px, 100%); min-width: 0; }
+.td-video-t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.td-right { display: grid; grid-template-columns: 140px 84px 60px 30px 30px; align-items: center; justify-items: start; gap: 6px; }
+.td.compact .td-right { grid-template-columns: auto auto auto; }
+@media (max-width: 760px) {
+  .td-row { grid-template-columns: auto auto minmax(0, 1fr) !important; }
+  .td-right { grid-column: 3 / -1; grid-template-columns: repeat(auto-fill, minmax(auto, max-content)); display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .td-video { max-width: 100%; }
+}
+.td-add .td-link { width: auto; max-width: 220px; flex: none; font-size: 12.5px; }
+.td-suggest { display: inline-flex; align-items: center; gap: 6px; margin: -4px 0 8px 30px; padding: 5px 10px; border: 1px dashed var(--accent); border-radius: 999px; background: none; color: var(--fg); font: inherit; font-size: 12.5px; cursor: pointer; max-width: calc(100% - 30px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.td-suggest:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+@media (max-width: 760px) { .td-add { flex-wrap: wrap; } .td-add .td-link { max-width: 100%; flex: 1 1 100%; } }
