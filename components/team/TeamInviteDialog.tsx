@@ -2,6 +2,7 @@
 
 // Convidar alguém para a equipa XMEDIA em 2 passos: (1) email + acesso à plataforma → (2) link pronto a copiar.
 // A pessoa completa nome, função, foto e código no link; o admin só define o valor/hora depois.
+import { supabaseEnabled } from "@/lib/supabase/client";
 import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { useT, type Key, type Lang } from "@/lib/i18n";
@@ -33,6 +34,10 @@ export function TeamInviteDialog({ onClose, onDone }: { onClose: () => void; onD
   const [copied, setCopied] = useState(false);
   const first = useRef<HTMLInputElement>(null);
   const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+  // por omissão o convite sai logo por email (antes só criava o link e era preciso um 2.º clique)
+  const [mailNow, setMailNow] = useState(supabaseEnabled);
+  /** Motivo real quando o email não sai (ex.: domínio recusado pela Resend), em vez de uma mensagem genérica. */
+  const why = (r?: string) => (!r || r === "no_provider" ? t("ti.mailFail") : r === "local_mode" ? t("inv.reason.local_mode") : t("ti.mailFailWhy", { r: r.replace(/^provider_/, "").slice(0, 180) }));
 
   useEffect(() => {
     first.current?.focus();
@@ -50,9 +55,10 @@ export function TeamInviteDialog({ onClose, onDone }: { onClose: () => void; onD
       const existing = (await team.members()).find((m) => m.email.toLowerCase() === e);
       const local = e.split("@")[0].replace(/[._-]+/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
       const m = await team.saveMember({ ...(existing ?? emptyMember()), id: existing?.id, name: existing?.name || local, email: e, lang, active: true, ...access(level) });
-      const r = await memberApi.invite(m.id, false);
+      const r = await memberApi.invite(m.id, mailNow);
       setMember(m);
       setRes(r);
+      if (mailNow && !r.email.sent) setErr(why(r.email.reason));
       setStep(2);
       onDone(m);
     } catch (x) {
@@ -74,7 +80,7 @@ export function TeamInviteDialog({ onClose, onDone }: { onClose: () => void; onD
     try {
       const r = await memberApi.invite(member.id, true);
       setRes(r);
-      setErr(r.email.sent ? "" : t("ti.mailFail"));
+      setErr(r.email.sent ? "" : why(r.email.reason));
     } catch (x) {
       setErr((x as Error).message);
     }
@@ -132,18 +138,23 @@ export function TeamInviteDialog({ onClose, onDone }: { onClose: () => void; onD
                 ))}
               </div>
               <button className="btn accent" disabled={!ok || busy} data-testid="ti-create">
-                <Icon name="link" size={14} /> {t("ti.create")}
+                <Icon name={mailNow ? "mail" : "link"} size={14} /> {busy ? "…" : mailNow ? t("ti.createSend") : t("ti.create")}
               </button>
             </div>
+            {supabaseEnabled && (
+              <label className="row small" style={{ gap: 8 }}>
+                <input type="checkbox" checked={mailNow} onChange={(e) => setMailNow(e.target.checked)} data-testid="ti-mailnow" /> {t("ti.mailNow")}
+              </label>
+            )}
             {err && <p className="tone-danger small">{err}</p>}
           </form>
         )}
 
         {step === 2 && res && member && (
           <div className="stack">
-            <h2 className="ti-h">{t("ti.ready")}</h2>
+            <h2 className="ti-h" data-testid="ti-result">{res.email.sent ? t("ti.sentTitle") : t("ti.ready")}</h2>
             <p className="muted small" style={{ margin: 0 }}>
-              {t("ti.readySub", { email: member.email })}
+              {res.email.sent ? t("ti.sentSub", { email: member.email }) : t("ti.readySub", { email: member.email })}
             </p>
             <button className="codechip ti-link" onClick={copy} data-testid="ti-link">
               {res.link}
@@ -164,7 +175,7 @@ export function TeamInviteDialog({ onClose, onDone }: { onClose: () => void; onD
               <li>{t("ti.next2")}</li>
               <li>{t("ti.next3")}</li>
             </ol>
-            {err && <p className="tone-warn small">{err}</p>}
+            {err && <p className="tone-warn small" data-testid="ti-err">{err}</p>}
             <div className="row between">
               <button
                 className="btn ghost"
