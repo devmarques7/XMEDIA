@@ -8,10 +8,10 @@ import { Icon } from "@/components/Icon";
 import { COMMON_TZ, SLOTS, bestTimes, peakWindows } from "@/lib/bestTimes";
 import { Select } from "@/components/Select";
 import { DEFAULT_CLIENT_PROCESS, groupName, normalizeProcessDef, stageCounts, stageName, type ClientProcess } from "@/lib/clientProcess";
-import { thumbOf, DEFAULT_PROCESS, deadline, gridItems, journeyState, JOURNEY, type ContentPost, type Customer, type Instagram, type Phase, type ProcessSettings } from "@/lib/customer";
+import { DEFAULT_PROCESS, deadline, gridItems, journeyState, JOURNEY, type ContentPost, type Customer, type Instagram, type Phase, type ProcessSettings } from "@/lib/customer";
 import { useT, type Key } from "@/lib/i18n";
 import { BOARD_COLS, boardPhase } from "./ContentBoard";
-import { Cover, TypeIcon } from "./parts";
+import { Cover, PostThumb, TypeIcon } from "./parts";
 
 const DAY = 86_400_000;
 /** Torna um tile clicável (abre a página daquele dado). */
@@ -75,7 +75,7 @@ export function ProcessTracker({ posts, stage, process = DEFAULT_PROCESS, onOpen
           return (
             <button key={p.id} className={`prc-row ty-${p.type}`} onClick={() => onOpen(p)} data-testid="process-row">
               <span className="prc-thumb">
-                <Cover src={thumbOf(p)} />
+                <PostThumb p={p} />
               </span>
               <span className="prc-name">
                 <span className="prc-type">
@@ -471,7 +471,7 @@ export function AutoPublishTile({ posts, connected, className = "", onClick, onO
             const q = p.status === "scheduled";
             return (
               <button key={p.id} className={`igm-cell ${q ? "q" : "w"}`} onClick={() => onOpen?.(p)} title={p.title}>
-                <Cover src={thumbOf(p)} />
+                <PostThumb p={p} />
                 <span className="igm-tag mono">{q ? new Date(p.scheduled_at).toLocaleDateString(locale, { day: "2-digit", month: "short" }) : t("ap2.waitingShort")}</span>
               </button>
             );

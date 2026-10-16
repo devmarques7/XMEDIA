@@ -10,6 +10,7 @@ import { Select } from "@/components/Select";
 import { useT } from "@/lib/i18n";
 import { splitChecklist } from "@/lib/validation";
 import { useMediaSrc } from "@/lib/media";
+import { useVideoPoster } from "@/lib/videoPoster";
 import type { NoteInput } from "@/lib/portalApi";
 import { Icon } from "../Icon";
 import { Cover } from "./parts";
@@ -415,11 +416,13 @@ function StageVideo({
   onPlay: (p: boolean) => void;
 }) {
   const url = useMediaSrc(src);
+  const poster = useVideoPoster(url); // frame do meio enquanto não toca
   if (!url) return <span className="cv-empty" style={{ aspectRatio: "9/16" }} />;
   return (
     <StreamVideo
       ref={ref}
       src={url}
+      poster={poster}
       playsInline
       preload="metadata"
       onTimeUpdate={(e) => onTime(e.currentTarget.currentTime)}

@@ -8,6 +8,7 @@ import { Icon } from "@/components/Icon";
 import { thumbOf, IG_METRICS, JOURNEY, engagementRate, gridItems, journeyState, monthGrid, postsByDay, type ContentPost, type Customer, type GridItem, type Instagram, type PostStatus, type PostType } from "@/lib/customer";
 import { useT, type Key } from "@/lib/i18n";
 import { useMediaSrc } from "@/lib/media";
+import { useVideoPoster } from "@/lib/videoPoster";
 
 export const STATUS_TONE: Record<PostStatus, string> = {
   idea: "muted",
@@ -25,9 +26,23 @@ export function Cover({ src, alt = "", className = "" }: { src?: string; alt?: s
   return url ? <img src={url} alt={alt} className={className} loading="lazy" /> : <span className={`cv-empty ${className}`} aria-hidden />;
 }
 
-export function Video({ src, className = "" }: { src: string; className?: string }) {
+/** Vídeo com capa: a `poster` dada (capa do reel) ou, se não houver, o frame do meio do vídeo. */
+export function Video({ src, className = "", poster }: { src: string; className?: string; poster?: string }) {
   const url = useMediaSrc(src);
-  return url ? <StreamVideo className={className} src={url} controls muted playsInline preload="metadata" /> : null;
+  const posterUrl = useMediaSrc(poster);
+  const shown = useVideoPoster(url, posterUrl);
+  return url ? <StreamVideo className={className} src={url} poster={shown} controls muted playsInline preload="metadata" /> : null;
+}
+
+/** Miniatura de um conteúdo: capa/imagem (thumbOf) ou, num vídeo sem capa, o frame do meio. */
+export function PostThumb({ p, className = "" }: { p: Pick<ContentPost, "type" | "cover" | "media">; className?: string }) {
+  const thumb = thumbOf(p);
+  const video = thumb ? undefined : p.media.find((m) => m.kind === "video")?.src;
+  const videoUrl = useMediaSrc(video);
+  const frame = useVideoPoster(videoUrl);
+  if (thumb) return <Cover src={thumb} className={className} />;
+  // eslint-disable-next-line @next/next/no-img-element
+  return frame ? <img src={frame} alt="" className={className} loading="lazy" /> : <span className={`cv-empty ${className}`} aria-hidden />;
 }
 
 export function TypeIcon({ type }: { type: PostType | "ig" }) {
@@ -52,7 +67,7 @@ export function PostRow({ p, onOpen, onDelete }: { p: ContentPost; onOpen: (p: C
   return (
     <button className="ct-row" data-post-card={p.id} onClick={() => onOpen(p)} onKeyDown={(e) => onDelete && (e.key === "Delete" || e.key === "Backspace") && (e.preventDefault(), onDelete(p))}>
       <span className="ct-thumb">
-        <Cover src={thumbOf(p)} />
+        <PostThumb p={p} />
         <span className="ct-type">
           <TypeIcon type={p.type} />
         </span>

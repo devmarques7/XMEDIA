@@ -6,11 +6,11 @@
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
-import { BIN_DAYS, binDaysLeft, isEmptyPost, thumbOf, type ContentPost, type Customer } from "@/lib/customer";
+import { BIN_DAYS, binDaysLeft, isEmptyPost, type ContentPost, type Customer } from "@/lib/customer";
 import { customerStore } from "@/lib/customerStore";
 import { useT, type Key } from "@/lib/i18n";
 import { Avatar } from "@/components/team/Avatar";
-import { Cover, TypeIcon } from "./parts";
+import { PostThumb, TypeIcon } from "./parts";
 
 
 // ---------- feedback de apagar: o cartão "voa" até ao Lixo e ouve-se um som curto ----------
@@ -218,7 +218,7 @@ export function BinView({ customerId, customers = [], onChange }: { customerId?:
           return (
             <li key={p.id} className="bin-row" data-testid="bin-row">
               <span className="bin-th">
-                <Cover src={thumbOf(p)} />
+                <PostThumb p={p} />
               </span>
               <span className="bin-main">
                 <b>{p.title || p.caption.split("\n")[0] || t(`ct.type.${p.type}` as Key)}</b>

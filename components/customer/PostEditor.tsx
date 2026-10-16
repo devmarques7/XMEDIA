@@ -285,7 +285,7 @@ export function PostEditor({
                     }}
                     data-testid="pe-tile"
                   >
-                    {m.kind === "video" ? <Video src={m.src} className="pe2-fill" /> : <Cover src={m.src} />}
+                    {m.kind === "video" ? <Video src={m.src} className="pe2-fill" poster={hasCover(p.type) ? p.cover : undefined} /> : <Cover src={m.src} />}
                     {m.kind === "video" && <span className="pe2-play"><Icon name="play" size={14} /></span>}
                     {isPending(m.src) && <span className="pe2-up mono">…</span>}
                     {p.media.length > 1 && <span className="pe2-n mono">{i + 1}</span>}
