@@ -10,6 +10,7 @@ import { COMPANY, suggestions, todayTasks } from "../today";
 import { splitChecklist, validationState } from "../validation";
 import { applyClientJson } from "../clientJson";
 import { DraftError, buildDrafts, customerBrief, draftLines, matchCustomers, pickCustomer } from "../contentDrafts";
+import { applyChangeRequests, changeLines, matchPosts, pickPost, splitChanges } from "../changeRequests";
 
 type Json = Record<string, unknown>;
 
@@ -202,6 +203,16 @@ async function run(name: string, a: Json, db: SupabaseClient, owner: string): Pr
       const created = buildDrafts(c, a.drafts);
       for (const p of created) await savePost(p);
       return JSON.stringify({ ok: true, summary: draftLines(c.name, created), created: created.map((p) => ({ id: p.id, type: p.type, title: p.title, scheduled_at: p.scheduled_at || undefined })) });
+    }
+    case "find_content": {
+      const hits = matchPosts(await allPosts(), await customers(), a.query, a.customer);
+      return JSON.stringify(hits.slice(0, 15).map(({ post: p, customer: c }) => ({ id: p.id, title: p.title, customer: c.name, type: p.type, status: p.status, round: p.round, open_comments: openNotes(p).length })));
+    }
+    case "log_change_requests": {
+      const hit = pickPost(await allPosts(), await customers(), a.content, a.customer);
+      const r = applyChangeRequests(hit.post, { changes: a.changes, from: String(a.from ?? ""), source: String(a.source ?? "") });
+      await savePost(r.post);
+      return JSON.stringify({ ok: true, summary: changeLines(hit, r, splitChanges(a.changes)), content: { id: r.post.id, status: r.post.status }, added: r.added, moved_to_changes: r.moved, open_comments: r.open });
     }
     case "import_client_json": {
       const c = await findCustomer(a.customer);
