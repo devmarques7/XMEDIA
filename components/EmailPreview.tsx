@@ -26,7 +26,7 @@ export function EmailPreview() {
     const link = `${origin}/exemplo/abc123`;
     switch (kind) {
       case "team":
-        return inviteEmail({ lang, name: "Ana", inviter: "Daniel Marques", link, expiresAt: in7, logoUrl: `${origin}/pwa-icon/128`, origin });
+        return inviteEmail({ lang, name: "Ana", inviter: "Daniel Marques", link, expiresAt: in7, logoUrl: `${origin}/pwa-icon/128?v=2`, origin });
       case "reset":
         return resetEmail({ lang, origin, link });
       case "portal":

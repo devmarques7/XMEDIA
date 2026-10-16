@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { LOGO_PATH, LOGO_VIEWBOX } from "@/components/Logo";
 
 export const runtime = "edge";
 
@@ -30,7 +31,9 @@ export async function GET(req: Request) {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 18 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 999, border: "5px solid #fff", display: "flex" }} />
+          <svg width={44} height={44} viewBox={LOGO_VIEWBOX}>
+            <path d={LOGO_PATH} fill="#ffffff" />
+          </svg>
           <span style={{ fontSize: 40, letterSpacing: 2 }}>XMEDIA</span>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>

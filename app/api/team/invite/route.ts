@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     let email: { sent: boolean; reason?: string } = { sent: false, reason: "no_email" };
     if (send && m.email) {
       const inviter = (admin.user_metadata?.full_name as string) || admin.email || "XMEDIA";
-      email = await sendEmail(m.email, inviteEmail({ lang: (m.lang as Lang) || "pt", name: m.name, inviter, link, expiresAt: expires, logoUrl: `${origin}/pwa-icon/128` }));
+      email = await sendEmail(m.email, inviteEmail({ lang: (m.lang as Lang) || "pt", name: m.name, inviter, link, expiresAt: expires, logoUrl: `${origin}/pwa-icon/128?v=2` }));
     }
     return Response.json({ link, expiresAt: expires.toISOString(), email });
   } catch (e) {

@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   description: "Pre-production projects, reels and shoot checklist.",
   applicationName: "XMEDIA",
   appleWebApp: { capable: true, title: "XMEDIA", statusBarStyle: "black-translucent" },
-  icons: { apple: "/pwa-icon/180" },
+  icons: { apple: "/pwa-icon/180?v=2" },
 };
 
 export const viewport: Viewport = { themeColor: "#0b0b0b", width: "device-width", initialScale: 1, viewportFit: "cover", colorScheme: "dark light" };
