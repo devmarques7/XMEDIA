@@ -187,7 +187,8 @@ export default function TeamPage() {
 
       {isAdmin && <TeamWorkload />}
 
-      <div className={isAdmin ? "calgrid" : ""}>
+      {/* lista a toda a largura no separador Convites ou sem ninguém aberto; com um membro aberto: lista + perfil */}
+      <div className={isAdmin ? `calgrid ${listView === "invites" || !selected ? "solo" : ""}` : ""}>
         {isAdmin && (
           <section className="w">
             <div className="w-head" style={{ flexWrap: "wrap", gap: 10 }}>
