@@ -1,4 +1,4 @@
-import { senderFrom } from "@/lib/inviteEmail";
+import { invoiceFrom, senderFrom } from "@/lib/inviteEmail";
 import { r2Enabled } from "@/lib/server/r2";
 import { serviceClient } from "@/lib/server/admin";
 
@@ -82,6 +82,8 @@ export async function GET(req: Request) {
     resend: has("RESEND_API_KEY"),
     // INVITE_FROM tal como está na Vercel é aceite pela Resend? (senão a app usa o nome com o endereço por omissão)
     resendFrom: !process.env.INVITE_FROM?.trim() || senderFrom() === process.env.INVITE_FROM.trim(),
+    // de onde saem as invoices (INVOICE_FROM ou invoices@mediamarques.com)
+    invoiceFrom: invoiceFrom(),
     cron: has("CRON_SECRET") || !!tables.app_cron,
     ai: has("ANTHROPIC_API_KEY"),
     mux: has("MUX_TOKEN_ID") && has("MUX_TOKEN_SECRET"),
