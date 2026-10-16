@@ -3563,3 +3563,8 @@ button.fin-tile:hover, button.fin-tile[aria-pressed="true"] { border-color: var(
 .rc-t { color: var(--fg); text-decoration: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rc-t:hover { text-decoration: underline; }
 @media (max-width: 640px) { .rc-list li { grid-template-columns: minmax(0, 1fr) auto; } .rc-list li > :nth-child(2) { display: none; } }
+
+/* Cabeçalho: botão da barra lateral (onde estava o "voltar"); "voltar" passa para dentro da página */
+.sb-iconbtn.sb-toggle { display: grid; flex: none; }
+.page-back { display: flex; align-items: center; gap: 8px; margin: 2px 0 6px; }
+.page-back .btn { padding-left: 0; }

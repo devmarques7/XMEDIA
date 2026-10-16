@@ -8,6 +8,8 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AiChat } from "./AiChat";
 import { UndoControl } from "./UndoControl";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./Tooltip";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { installJournal } from "@/lib/journal";
 
 import { Icon, type IconName } from "./Icon";
@@ -87,13 +89,29 @@ export function AppShell({ children, left, right }: { children: React.ReactNode;
       return !c;
     });
   };
+  // um só botão (no cabeçalho, onde estava o "voltar"): recolhe/abre a barra; no telemóvel abre a gaveta
+  const toggleSidebar = () => (window.matchMedia("(max-width: 900px)").matches ? setDrawer((d) => !d) : toggle());
+  useEffect(() => {
+    const k = (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey) || e.shiftKey || e.altKey || e.key.toLowerCase() !== "b") return;
+      if (e.target instanceof HTMLElement && e.target.closest("[contenteditable='true'], [contenteditable='']")) return;
+      e.preventDefault();
+      toggleSidebar();
+    };
+    window.addEventListener("keydown", k);
+    return () => window.removeEventListener("keydown", k);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div className={`shell ${collapsed ? "is-collapsed" : ""} ${drawer ? "drawer-open" : ""}`}>
-      <Sidebar collapsed={collapsed} onToggle={toggle} onClose={() => setDrawer(false)} />
+      <Sidebar collapsed={collapsed} onClose={() => setDrawer(false)} />
       {drawer && <div className="shell-scrim" onClick={() => setDrawer(false)} />}
       <div className="shell-main">
-        <Header left={left} right={right} onMenu={() => setDrawer(true)} />
-        <main className="wrap">{access === null ? null : canOpen(access, path) ? children : <NoAccess />}</main>
+        <Header right={right} onMenu={toggleSidebar} collapsed={collapsed} />
+        <main className="wrap">
+          {left && <div className="page-back">{left}</div>}
+          {access === null ? null : canOpen(access, path) ? children : <NoAccess />}
+        </main>
       </div>
       {(access?.admin || access?.perms.has("ai.use")) && <AiChat />}
     </div>
@@ -114,7 +132,7 @@ function NoAccess() {
   );
 }
 
-function Sidebar({ collapsed, onToggle, onClose }: { collapsed: boolean; onToggle: () => void; onClose: () => void }) {
+function Sidebar({ collapsed, onClose }: { collapsed: boolean; onClose: () => void }) {
   const { t } = useT();
   const path = usePathname();
   const [closed, setClosed] = useState<string[]>([]);
@@ -129,10 +147,15 @@ function Sidebar({ collapsed, onToggle, onClose }: { collapsed: boolean; onToggl
   const access = useAccess();
   const allowed = (it: Item) => access !== null && canOpen(access, it.href);
   const link = (it: Item) => (
-    <Link key={it.href} href={it.href} className="sb-link" aria-current={active(path, it.href) ? "page" : undefined} title={collapsed ? t(it.key) : undefined} {...(it.href === "/lixo" ? { "data-bin-target": "" } : {})}>
-      <Icon name={it.icon} />
-      <span className="sb-text">{t(it.key)}</span>
-    </Link>
+    <Tooltip key={it.href}>
+      <TooltipTrigger asChild>
+        <Link href={it.href} className="sb-link" aria-current={active(path, it.href) ? "page" : undefined} {...(it.href === "/lixo" ? { "data-bin-target": "" } : {})}>
+          <Icon name={it.icon} />
+          <span className="sb-text">{t(it.key)}</span>
+        </Link>
+      </TooltipTrigger>
+      <TooltipContent side="right">{t(it.key)}</TooltipContent>
+    </Tooltip>
   );
 
   return (
@@ -164,22 +187,29 @@ function Sidebar({ collapsed, onToggle, onClose }: { collapsed: boolean; onToggl
 
       <div className="sb-foot">
         {FOOT.filter(allowed).map(link)}
-        <button className="sb-link sb-collapse" onClick={onToggle} aria-label={collapsed ? t("nav.expand") : t("nav.collapse")} title={collapsed ? t("nav.expand") : t("nav.collapse")}>
-          <Icon name={collapsed ? "expand" : "collapse"} />
-          <span className="sb-text">{t("nav.collapse")}</span>
-        </button>
+
       </div>
     </aside>
   );
 }
 
-export function Header({ left, right, onMenu }: { left?: React.ReactNode; right?: React.ReactNode; onMenu?: () => void }) {
+export function Header({ left, right, onMenu, collapsed }: { left?: React.ReactNode; right?: React.ReactNode; onMenu?: () => void; collapsed?: boolean }) {
   const { t } = useT();
+  const mac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.platform);
   return (
     <header className="topbar shellbar">
-      <button className="sb-iconbtn sb-menu" onClick={onMenu} aria-label={t("nav.menu")}>
-        <Icon name="apps" size={20} />
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button className="sb-iconbtn sb-toggle" onClick={onMenu} aria-label={collapsed ? t("nav.expand") : t("nav.collapse")} data-testid="sb-toggle">
+            {collapsed ? <PanelLeftOpen size={19} /> : <PanelLeftClose size={19} />}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" align="start">
+          <b>
+            {collapsed ? t("nav.expand") : t("nav.collapse")} <span className="tt-hint">{mac ? "⌘B" : "Ctrl+B"}</span>
+          </b>
+        </TooltipContent>
+      </Tooltip>
       {left}
       <KpiBar />
       <div className="row" style={{ gap: 8, flexWrap: "nowrap" }}>
