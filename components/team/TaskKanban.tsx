@@ -12,6 +12,7 @@ import type { Customer } from "@/lib/customer";
 import { useBoardDrag } from "@/lib/useBoardDrag";
 import { COMPANY } from "@/lib/today";
 import { Avatar } from "./Avatar";
+import { AssigneePicker } from "./Assignees";
 
 export function TaskKanban({
   tasks,
@@ -115,19 +116,12 @@ export function TaskKanban({
                         )}
                       </span>
                       <span data-no-drag>
-                        <Select
-                          className="select tkb-who"
+                        <AssigneePicker
                           value={taskOwner(x)}
-                          onChange={(e) => onSave({ ...x, assignee: e.target.value || undefined, mentions: e.target.value ? [...new Set([e.target.value, ...x.mentions])] : x.mentions, updated: new Date().toISOString() })}
-                          aria-label={t("st.assignee")}
-                        >
-                          <option value="">{t("st.nobody")}</option>
-                          {people.map((p) => (
-                            <option key={p.email} value={p.email}>
-                              {p.name}
-                            </option>
-                          ))}
-                        </Select>
+                          people={people}
+                          size={22}
+                          onChange={(e) => onSave({ ...x, assignee: e, mentions: e ? [...new Set([e, ...x.mentions])] : x.mentions, updated: new Date().toISOString() })}
+                        />
                       </span>
                       {owner && <Avatar name={owner.name} photo={owner.photo} size={24} />}
                     </div>

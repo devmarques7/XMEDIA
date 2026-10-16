@@ -175,7 +175,138 @@ export function Review({
   const near = (n: Note) => typeof n.t === "number" && Math.abs(n.t - time) <= 3 / fps;
   const pins = here.filter((n) => typeof n.x === "number" && (item?.kind !== "video" || near(n)));
 
-  if (!item) return <p className="muted small">{t("rv.noMedia")}</p>;
+  // caixa de comentário e checklist: as mesmas com ou sem ficheiro
+  const draftBox = (
+    <>
+      {draft && (
+            <div className="rv-draft">
+              <span className="label muted">{where({ ...draft, id: "", by: "client", text: "", round: 0, done: false, at: "", updated: "" } as Note)}</span>
+              <textarea className="textarea" rows={2} autoFocus value={text} onChange={(e) => setText(e.target.value)} placeholder={t("rv.placeholder")} onKeyDown={(e) => e.key === "Enter" && (e.metaKey || e.ctrlKey) && submit()} />
+              {split ? (
+                <div className="rv-split" data-testid="rv-split">
+                  <span className="small">{t("ck.suggest", { n: split.length })}</span>
+                  <ol>
+                    {split.map((x, i) => (
+                      <li key={i}>☐ {x}</li>
+                    ))}
+                  </ol>
+                  <div className="row">
+                    <button className="btn small accent" onClick={() => submit(true)} disabled={busy} data-testid="rv-split-yes">
+                      {t("ck.yes")}
+                    </button>
+                    <button className="btn small" onClick={() => submit(false)} disabled={busy}>
+                      {t("ck.no")}
+                    </button>
+                  </div>
+                </div>
+              ) : null}
+              <div className="row">
+                <button className="btn small accent" onClick={() => submit()} disabled={busy || !text.trim()} data-testid="rv-add">
+                  {t("rv.add")}
+                </button>
+                <button className="btn small ghost" onClick={() => setDraft(null)}>
+                  {t("ct.close")}
+                </button>
+              </div>
+            </div>
+          )}
+    </>
+  );
+  const listAside = (
+      <aside className="rv-list">
+        <div className="row between">
+          <span className="label muted">{mode === "admin" ? t("rv.checklist") : t("rv.comments")}</span>
+          {notes.length > 0 && (
+            <span className="mono small">
+              {done}/{notes.length}
+            </span>
+          )}
+        </div>
+        {notes.length > 0 && (
+          <span className="cu-bar">
+            <i style={{ width: `${(done / notes.length) * 100}%` }} />
+          </span>
+        )}
+        {notes.length === 0 && <p className="muted small">{canAdd ? t("rv.empty") : t("rv.none")}</p>}
+        <ol className="rv-items">
+          {notes.map((n) => (
+            <li key={n.id} className={`${n.done ? "done" : ""} ${focus === n.id ? "focus" : ""}`} onClick={() => open(n)}>
+              {mode === "admin" && onToggle ? (
+                <button
+                  className="check sm"
+                  role="checkbox"
+                  aria-checked={n.done}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggle(n.id, !n.done);
+                  }}
+                  aria-label={n.text}
+                />
+              ) : (
+                <span className={`rv-n ${n.by}`}>{num(n)}</span>
+              )}
+              <span className="rv-body">
+                <span className="label muted">
+                  {mode === "admin" && <b className={`rv-n ${n.by}`}>{num(n)}</b>} {where(n)}
+                  {mode === "admin" && ` · ${n.by === "client" ? n.author || t("ct.client") : t("ct.studio")}`}
+                  {n.round > 0 && ` · R${n.round}`}
+                </span>
+                <span className="rv-text">{n.text}</span>
+                {movable(n) && items.length > 1 && (
+                  <span className="rv-move" onClick={(e) => e.stopPropagation()}>
+                    <Select className="select" value={String(n.media)} onChange={(e) => (onMove!(n, { media: Number(e.target.value), x: n.x, y: n.y }), setSel(Number(e.target.value)))} aria-label={t("rv.moveTo")} data-testid="rv-move">
+                      {items.map((it) => (
+                        <option key={it.index} value={String(it.index)}>
+                          {it.index === -1 ? t("rv.cover") : it.kind === "video" && items.length === 1 ? t("rv.video") : t("rv.slide", { n: it.index + 1 })}
+                        </option>
+                      ))}
+                    </Select>
+                  </span>
+                )}
+                {n.done && mode === "client" && <span className="small tone-ok"><Icon name="check" size={14} /> {t("rv.resolved")}</span>}
+              </span>
+              {onRemove && !n.done && (mode === "admin" || n.by === "client") && (
+                <button
+                  className="btn ghost small"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRemove(n);
+                  }}
+                  aria-label={t("remove")}
+                >
+                  <Icon name="close" size={14} />
+                </button>
+              )}
+            </li>
+          ))}
+        </ol>
+      </aside>
+  );
+
+  // ainda sem ficheiro: piloto (fantasma no formato do conteúdo) + a mesma checklist — comentários gerais
+  if (!item)
+    return (
+      <div className="rv">
+        <div className="rv-main">
+          <div className={`rv-stage ${canAdd ? "can" : ""}`}>
+            <div
+              className={`rv-media rv-ghost ${post.type === "reel" || post.type === "story" ? "tall" : ""}`}
+              onClick={canAdd ? () => (setDraft({ media: 0 }), setText("")) : undefined}
+              data-testid="rv-ghost"
+            >
+              <span className="rv-ghost-in">
+                <Icon name={post.type === "reel" || post.type === "story" ? "play" : "image"} size={22} />
+                <b>{t("rv.pilot")}</b>
+                <span className="small">{t("rv.pilotHint")}</span>
+              </span>
+            </div>
+            {draftBox}
+            {canAdd && !draft && <p className="muted small">{t("rv.hintGhost")}</p>}
+          </div>
+        </div>
+        {listAside}
+      </div>
+    );
 
   return (
     <div className="rv">
@@ -288,110 +419,12 @@ export function Review({
             </div>
           )}
 
-          {draft && (
-            <div className="rv-draft">
-              <span className="label muted">{where({ ...draft, id: "", by: "client", text: "", round: 0, done: false, at: "", updated: "" } as Note)}</span>
-              <textarea className="textarea" rows={2} autoFocus value={text} onChange={(e) => setText(e.target.value)} placeholder={t("rv.placeholder")} onKeyDown={(e) => e.key === "Enter" && (e.metaKey || e.ctrlKey) && submit()} />
-              {split ? (
-                <div className="rv-split" data-testid="rv-split">
-                  <span className="small">{t("ck.suggest", { n: split.length })}</span>
-                  <ol>
-                    {split.map((x, i) => (
-                      <li key={i}>☐ {x}</li>
-                    ))}
-                  </ol>
-                  <div className="row">
-                    <button className="btn small accent" onClick={() => submit(true)} disabled={busy} data-testid="rv-split-yes">
-                      {t("ck.yes")}
-                    </button>
-                    <button className="btn small" onClick={() => submit(false)} disabled={busy}>
-                      {t("ck.no")}
-                    </button>
-                  </div>
-                </div>
-              ) : null}
-              <div className="row">
-                <button className="btn small accent" onClick={() => submit()} disabled={busy || !text.trim()} data-testid="rv-add">
-                  {t("rv.add")}
-                </button>
-                <button className="btn small ghost" onClick={() => setDraft(null)}>
-                  {t("ct.close")}
-                </button>
-              </div>
-            </div>
-          )}
+          {draftBox}
           {canAdd && !draft && <p className="muted small">{item.kind === "video" ? t("rv.hintVideo") : t("rv.hintImage")}</p>}
         </div>
       </div>
 
-      <aside className="rv-list">
-        <div className="row between">
-          <span className="label muted">{mode === "admin" ? t("rv.checklist") : t("rv.comments")}</span>
-          {notes.length > 0 && (
-            <span className="mono small">
-              {done}/{notes.length}
-            </span>
-          )}
-        </div>
-        {notes.length > 0 && (
-          <span className="cu-bar">
-            <i style={{ width: `${(done / notes.length) * 100}%` }} />
-          </span>
-        )}
-        {notes.length === 0 && <p className="muted small">{canAdd ? t("rv.empty") : t("rv.none")}</p>}
-        <ol className="rv-items">
-          {notes.map((n) => (
-            <li key={n.id} className={`${n.done ? "done" : ""} ${focus === n.id ? "focus" : ""}`} onClick={() => open(n)}>
-              {mode === "admin" && onToggle ? (
-                <button
-                  className="check sm"
-                  role="checkbox"
-                  aria-checked={n.done}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onToggle(n.id, !n.done);
-                  }}
-                  aria-label={n.text}
-                />
-              ) : (
-                <span className={`rv-n ${n.by}`}>{num(n)}</span>
-              )}
-              <span className="rv-body">
-                <span className="label muted">
-                  {mode === "admin" && <b className={`rv-n ${n.by}`}>{num(n)}</b>} {where(n)}
-                  {mode === "admin" && ` · ${n.by === "client" ? n.author || t("ct.client") : t("ct.studio")}`}
-                  {n.round > 0 && ` · R${n.round}`}
-                </span>
-                <span className="rv-text">{n.text}</span>
-                {movable(n) && items.length > 1 && (
-                  <span className="rv-move" onClick={(e) => e.stopPropagation()}>
-                    <Select className="select" value={String(n.media)} onChange={(e) => (onMove!(n, { media: Number(e.target.value), x: n.x, y: n.y }), setSel(Number(e.target.value)))} aria-label={t("rv.moveTo")} data-testid="rv-move">
-                      {items.map((it) => (
-                        <option key={it.index} value={String(it.index)}>
-                          {it.index === -1 ? t("rv.cover") : it.kind === "video" && items.length === 1 ? t("rv.video") : t("rv.slide", { n: it.index + 1 })}
-                        </option>
-                      ))}
-                    </Select>
-                  </span>
-                )}
-                {n.done && mode === "client" && <span className="small tone-ok"><Icon name="check" size={14} /> {t("rv.resolved")}</span>}
-              </span>
-              {onRemove && !n.done && (mode === "admin" || n.by === "client") && (
-                <button
-                  className="btn ghost small"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onRemove(n);
-                  }}
-                  aria-label={t("remove")}
-                >
-                  <Icon name="close" size={14} />
-                </button>
-              )}
-            </li>
-          ))}
-        </ol>
-      </aside>
+      {listAside}
     </div>
   );
 }

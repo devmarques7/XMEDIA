@@ -5,6 +5,7 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { Select } from "@/components/Select";
+import { AssigneePicker } from "@/components/team/Assignees";
 import type { AssignRule } from "@/lib/assignRules";
 import { PHASES, POST_TYPES, type Customer } from "@/lib/customer";
 import { customerStore } from "@/lib/customerStore";
@@ -58,15 +59,9 @@ export function AssignRulesPanel({ value = [], onChange, onSave }: { value?: Ass
             <span className="arp-w">
               <Icon name="next" size={13} /> {t("arp.assignTo")}
             </span>
-            <Select className="select" value={r.assignee} onChange={(e) => upd(r.id, { assignee: e.target.value })} aria-label={t("arp.assignTo")} data-testid="arp-person">
-              {!people.some((p) => p.email === r.assignee) && <option value={r.assignee}>{r.assignee || "—"}</option>}
-              {people.map((p) => (
-                <option key={p.email} value={p.email}>
-                  {p.name}
-                  {p.role ? ` · ${p.role}` : ""}
-                </option>
-              ))}
-            </Select>
+            <span data-testid="arp-person">
+              <AssigneePicker value={r.assignee} people={people} size={24} allowNone={false} label={t("arp.assignTo")} onChange={(e) => e && upd(r.id, { assignee: e })} />
+            </span>
             <span className="row" style={{ gap: 4, flexWrap: "nowrap" }}>
               <button className="check sm" role="checkbox" aria-checked={r.active !== false} onClick={() => upd(r.id, { active: r.active === false })} aria-label={t("arp.active")} title={t("arp.active")} />
               <button className="iconbtn" onClick={() => onChange(value.filter((x) => x.id !== r.id))} aria-label={t("remove")}>
