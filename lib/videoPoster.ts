@@ -65,7 +65,9 @@ function grab(url: string): Promise<string | null> {
       }
     };
     v.onerror = () => done(null);
-    v.src = url;
+    // parâmetro próprio: o browser não reaproveita a resposta do <video> (pedida sem CORS e guardada sem
+    // Access-Control-Allow-Origin), que deixaria o canvas "tainted" → miniatura preta
+    v.src = url.startsWith("blob:") || url.startsWith("data:") ? url : `${url}${url.includes("?") ? "&" : "?"}xmposter=1`;
   });
 }
 

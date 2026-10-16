@@ -3631,3 +3631,6 @@ kbd { display: inline-block; padding: 3px 8px; border: 1px solid var(--line); bo
 .td-suggest { display: inline-flex; align-items: center; gap: 6px; margin: -4px 0 8px 30px; padding: 5px 10px; border: 1px dashed var(--accent); border-radius: 999px; background: none; color: var(--fg); font: inherit; font-size: 12.5px; cursor: pointer; max-width: calc(100% - 30px); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .td-suggest:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 @media (max-width: 760px) { .td-add { flex-wrap: wrap; } .td-add .td-link { max-width: 100%; flex: 1 1 100%; } }
+/* vídeo em loop (cartões, pré-visualizações): sem controlos nem botão de play por cima */
+video.vloop { pointer-events: none; background: var(--panel-2); }
+video.vloop::-webkit-media-controls, video.vloop::-webkit-media-controls-start-playback-button, video.vloop::-webkit-media-controls-overlay-play-button { display: none !important; -webkit-appearance: none; }

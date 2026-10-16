@@ -384,6 +384,8 @@ export const hasCover = (type: PostType) => type === "reel";
 export function thumbOf(p: Pick<ContentPost, "type" | "cover" | "media">): string {
   if (hasCover(p.type)) return p.cover || p.media.find((m) => m.kind === "image")?.src || "";
   const first = p.media[0];
+  // como no Instagram: o 1.º slide é a capa; se for vídeo, quem mostra usa o frame do vídeo (devolve "")
+  if (first?.kind === "video") return "";
   return (first?.kind === "image" ? first.src : p.media.find((m) => m.kind === "image")?.src) || p.cover || "";
 }
 /**
