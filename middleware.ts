@@ -11,7 +11,9 @@ const PUBLIC = ["/login", "/auth", "/tutorial", "/manifest.webmanifest", "/sw.js
   // callbacks da Meta (pedido assinado com o app secret)
   "/api/instagram",
   // MCP com login (OAuth): descoberta, registo, token e o ecrã de autorização (que trata o login sozinho)
-  "/.well-known", "/api/oauth", "/oauth"];
+  "/.well-known", "/api/oauth", "/oauth",
+  // link digital das invoices (token assinado, expira no vencimento)
+  "/i"];
 // área do funcionário (sessão por código de série, não Supabase Auth)
 const MEMBER_AREA = ["/eu", "/api/member"];
 // portal do cliente (sessão própria, cookie xm_client)

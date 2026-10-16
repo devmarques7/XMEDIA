@@ -163,6 +163,25 @@ export default function InvoiceEditor() {
               }}
             />
           )}
+          {can(access, "finance.view") && !inv.void && (
+            <button
+              className="btn"
+              data-testid="inv-copy-link"
+              onClick={async () => {
+                try {
+                  const r = await fetch("/api/invoices/link", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: inv.id }) });
+                  const j = (await r.json()) as { url?: string; expires?: string; error?: string };
+                  if (!r.ok || !j.url) throw new Error(j.error || `HTTP ${r.status}`);
+                  await navigator.clipboard.writeText(j.url).catch(() => {});
+                  setToast(t("fin.linkCopied", { date: new Date(j.expires!).toLocaleDateString(undefined, { day: "2-digit", month: "short", year: "numeric" }) }));
+                } catch (e) {
+                  setToast((e as Error).message);
+                }
+              }}
+            >
+              <Icon name="link" size={14} /> {t("fin.copyLink")}
+            </button>
+          )}
           <button className="btn accent" onClick={() => downloadInvoice(inv).catch((e) => setToast(e.message))}>
             <Icon name="download" size={14} /> PDF
           </button>

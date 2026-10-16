@@ -23,6 +23,7 @@ export function SendInvoice({ inv, onSent, align = "right", className = "btn", a
   const { t } = useT();
   const [open, setOpen] = useState(autoOpen);
   const [from, setFrom] = useState("");
+  const [fixedCc, setFixedCc] = useState<string[]>(["contact@mediamarques.com"]);
   const [configured, setConfigured] = useState(true);
   const [to, setTo] = useState(inv.client.email ?? "");
   const [cc, setCc] = useState("");
@@ -37,8 +38,9 @@ export function SendInvoice({ inv, onSent, align = "right", className = "btn", a
     setErr("");
     fetch("/api/invoices/send")
       .then((r) => r.json())
-      .then((j: { from?: string; configured?: boolean }) => {
+      .then((j: { from?: string; cc?: string[]; configured?: boolean }) => {
         setFrom(j.from ?? "");
+        if (j.cc) setFixedCc(j.cc);
         setConfigured(j.configured !== false);
       })
       .catch(() => {});
@@ -83,6 +85,11 @@ export function SendInvoice({ inv, onSent, align = "right", className = "btn", a
           <p className="muted small" style={{ margin: 0 }}>
             {t("fin.sendFrom")}: <span className="mono">{from || "invoices@mediamarques.com"}</span>
           </p>
+          {fixedCc.length > 0 && (
+            <p className="muted small" style={{ margin: 0 }} data-testid="inv-send-fixedcc">
+              {t("fin.sendAlwaysCc")}: <span className="mono">{fixedCc.join(", ")}</span>
+            </p>
+          )}
           {!configured && <p className="note tone-warn" style={{ margin: 0 }}>{t("fin.sendNoKey")}</p>}
           <label className="small">
             {t("fin.sendTo")}
@@ -107,7 +114,7 @@ export function SendInvoice({ inv, onSent, align = "right", className = "btn", a
             <textarea className="textarea" rows={2} value={message} onChange={(e) => setMessage(e.target.value)} placeholder={t("fin.sendMsgPh")} />
           </label>
           <span className="muted small">
-            <Icon name="page" size={12} /> {t("fin.sendAttach", { file })}
+            <Icon name="page" size={12} /> {t("fin.sendAttach", { file })} · {t("fin.sendWithLink")}
           </span>
           {err && <p className="note tone-danger" style={{ margin: 0 }}>{err}</p>}
           <div className="row" style={{ justifyContent: "flex-end", gap: 8 }}>
