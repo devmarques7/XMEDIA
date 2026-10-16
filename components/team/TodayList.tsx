@@ -10,8 +10,9 @@ import { Icon } from "@/components/Icon";
 import { useT, type Key } from "@/lib/i18n";
 import { newTask } from "@/lib/tasks";
 import { taskOwner, weekDays, weekOf, ymd, type StudioTask } from "@/lib/studio";
-import { COMPANY, autoPlan, byRank, dueTag, reorder, type PlanRange, isInternal, mine, suggestions, todayTasks, type Bucket, type TodayTask } from "@/lib/today";
+import { COMPANY, autoPlan, byRank, dueTag, reorder, type PlanRange, isInternal, mine, mineOrOpen, suggestions, todayTasks, type Bucket, type TodayTask } from "@/lib/today";
 import { Avatar } from "./Avatar";
+import { TypeIcon } from "@/components/customer/parts";
 import { AssigneePicker } from "./Assignees";
 import { TodayCalendar } from "./TodayCalendar";
 import { CapacityBar } from "./Capacity";
@@ -20,7 +21,51 @@ import { calibrate, dayLoad, estimateTask, firstFreeDay, fmtMin, normalizePlan, 
 import type { useStudio } from "./useStudio";
 
 type S = ReturnType<typeof useStudio>;
-type Filter = "all" | "mine" | "internal";
+export type Filter = "all" | "mine" | "internal";
+
+const LS_FILTER = "xmedia:td:filter";
+/** Filtro da lista Hoje partilhado com o avatar do topo da página; por omissão "mine" (as minhas + sem responsável). */
+export function useTodayFilter(): [Filter, (f: Filter) => void] {
+  const [f, setF] = useState<Filter>("mine");
+  useEffect(() => {
+    try {
+      const v = localStorage.getItem(LS_FILTER);
+      if (v === "all" || v === "mine" || v === "internal") setF(v);
+    } catch {}
+  }, []);
+  return [
+    f,
+    (v: Filter) => {
+      setF(v);
+      try {
+        localStorage.setItem(LS_FILTER, v);
+      } catch {}
+    },
+  ];
+}
+
+/** Avatar no canto superior direito da página Hoje: alterna entre "as minhas (+ sem responsável)" e "de todos". */
+export function FocusToggle({ S, filter, onFilter }: { S: S; filter: Filter; onFilter: (f: Filter) => void }) {
+  const { t } = useT();
+  const me = S.people.find((p) => p.email === S.me);
+  const focused = filter === "mine";
+  const open = S.tasks.filter((x) => !x.deleted && !x.done && mineOrOpen(x, S.me)).length;
+  return (
+    <button
+      className={`td-focus ${focused ? "on" : ""}`}
+      onClick={() => onFilter(focused ? "all" : "mine")}
+      aria-pressed={focused}
+      title={focused ? t("td.focusOn") : t("td.focusOff")}
+      data-testid="td-focus"
+    >
+      <Avatar name={me?.name || S.me || "?"} photo={me?.photo} size={30} ring={focused} />
+      <span className="td-focus-l">
+        <b>{focused ? t("td.f.mine") : t("td.f.all")}</b>
+        <span className="muted small">{focused ? t("td.focusCount", { n: open }) : t("td.focusAll")}</span>
+      </span>
+    </button>
+  );
+}
 type When = "today" | "tomorrow" | "week" | "none";
 
 const addDays = (d: string, n: number) => ymd(new Date(new Date(d + "T12:00:00").getTime() + n * 86_400_000));
@@ -63,10 +108,12 @@ function EditableTitle({ value, label, onSave }: { value: string; label: string;
   );
 }
 
-export function TodayList({ S, compact, max = 8, clientId }: { S: S; compact?: boolean; max?: number; clientId?: string }) {
+export function TodayList({ S, compact, max = 8, clientId, filter: outer, onFilter }: { S: S; compact?: boolean; max?: number; clientId?: string; /** Filtro controlado pela página (avatar do topo). */ filter?: Filter; onFilter?: (f: Filter) => void }) {
   const { t, locale } = useT();
   const today = ymd(new Date());
-  const [filter, setFilter] = useState<Filter>("all");
+  const [own, setOwn] = useState<Filter>("all");
+  const filter = outer ?? own;
+  const setFilter = onFilter ?? setOwn;
   const [title, setTitle] = useState("");
   const [cust, setCust] = useState(COMPANY);
   const [when, setWhen] = useState<When>("today");
@@ -94,7 +141,7 @@ export function TodayList({ S, compact, max = 8, clientId }: { S: S; compact?: b
   const input = useRef<HTMLInputElement>(null);
 
   const items = useMemo(() => todayTasks(S.tasks, S.posts, S.settings.process), [S.tasks, S.posts, S.settings.process]);
-  const shown = items.filter((x) => (filter === "mine" ? mine(x.t, S.me) : filter === "internal" ? isInternal(x.t) : true));
+  const shown = items.filter((x) => (filter === "mine" ? mineOrOpen(x.t, S.me) : filter === "internal" ? isInternal(x.t) : true));
   const by = (b: Bucket) => shown.filter((x) => x.bucket === b);
   const sugg = useMemo(() => (compact ? [] : suggestions(S.posts, S.tasks, S.settings.process)), [compact, S.posts, S.tasks, S.settings.process]);
   const person = (e: string) => S.people.find((p) => p.email === e);
@@ -226,7 +273,7 @@ export function TodayList({ S, compact, max = 8, clientId }: { S: S; compact?: b
             </span>
             {x.post && (
               <Link href={`/clientes/${x.post.customer_id}?tab=content&post=${x.post.id}`} className="td-video">
-                <Icon name="video" size={12} /> {x.post.title || t(`ct.type.${x.post.type}` as Key)}
+                <TypeIcon type={x.post.type} /> <span className="td-video-k">{t(`ct.type.${x.post.type}` as Key)}</span> {x.post.title || ""}
               </Link>
             )}
             {x.alerts
@@ -408,7 +455,7 @@ export function TodayList({ S, compact, max = 8, clientId }: { S: S; compact?: b
           <div className="td-bar">
             <div className="seg" role="group" aria-label="filter">
               {(["all", "mine", "internal"] as Filter[]).map((f) => (
-                <button key={f} aria-pressed={filter === f} onClick={() => setFilter(f)}>
+                <button key={f} aria-pressed={filter === f} onClick={() => setFilter(f)} title={f === "mine" ? t("td.focusOn") : undefined}>
                   {t(`td.f.${f}` as Key)}
                 </button>
               ))}
@@ -514,7 +561,7 @@ export function TodayList({ S, compact, max = 8, clientId }: { S: S; compact?: b
                   </span>
                   <span className="td-main">
                     <Link href={`/clientes/${p.customer_id}?tab=content&post=${p.id}`} className="td-title">
-                      {p.title || t(`ct.type.${p.type}` as Key)}
+                      <TypeIcon type={p.type} /> {p.title || t(`ct.type.${p.type}` as Key)}
                     </Link>
                     <span className="td-meta">
                       <span className="td-client">
@@ -545,7 +592,7 @@ export function TodayList({ S, compact, max = 8, clientId }: { S: S; compact?: b
 
       <TodayCalendar
         view={tab}
-        tasks={scoped.map((x) => x.t).concat(S.tasks.filter((x) => !x.deleted && byClient(x) && !scoped.some((y) => y.t.id === x.id) && (filter === "all" || (filter === "mine" ? mine(x, S.me) : isInternal(x)))))}
+        tasks={scoped.map((x) => x.t).concat(S.tasks.filter((x) => !x.deleted && byClient(x) && !scoped.some((y) => y.t.id === x.id) && (filter === "all" || (filter === "mine" ? mineOrOpen(x, S.me) : isInternal(x)))))}
         posts={S.posts.filter((p) => byClient(p))}
         proc={S.settings.process}
         onToggle={(x) => S.saveTask({ ...x, done: !x.done })}

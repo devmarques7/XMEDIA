@@ -6,6 +6,7 @@ import { EmailPreview } from "@/components/EmailPreview";
 import { ConnectionsPanel } from "@/components/ConnectionsPanel";
 import { StoragePanel } from "@/components/StoragePanel";
 import { AssignRulesPanel } from "@/components/AssignRulesPanel";
+import { AiAccessPanel } from "@/components/AiAccessPanel";
 import { useEffect, useState } from "react";
 import { CreatePasscode } from "@/components/customer/CreatePasscode";
 import { AppShell, Toast, useToast } from "@/components/ui";
@@ -244,6 +245,11 @@ export default function SettingsPage() {
         <section className="w span-12 stack" id="armazenamento">
           <span className="label muted">{t("stg.title")}</span>
           <StoragePanel />
+        </section>
+
+        <section className="w span-12 stack" id="assistente">
+          <span className="label muted">{t("aia.title")}</span>
+          <AiAccessPanel onToast={setToast} />
         </section>
 
         <section className="w span-12 stack" id="ligacoes">

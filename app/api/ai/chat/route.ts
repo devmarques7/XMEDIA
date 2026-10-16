@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { SYSTEM_PROMPT, TOOLS } from "@/lib/ai/tools";
-import { requireAdmin } from "@/lib/server/admin";
+import { requirePerm } from "@/lib/server/admin";
 import { mcpForChat } from "@/lib/server/connections";
 
 export const maxDuration = 120;
@@ -14,11 +14,12 @@ const supabaseOn = () => Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process
  * que têm de voltar sem alterações no pedido seguinte).
  */
 export async function POST(req: Request) {
-  // acesso: com Supabase, só o administrador autenticado; em modo local, um código definido na Vercel
+  // acesso: com Supabase, o administrador ou quem ele autorizou (permissão ai.use, Definições → Assistente IA);
+  // em modo local, um código definido na Vercel
   let owner = "";
   if (supabaseOn()) {
     try {
-      owner = (await requireAdmin()).id;
+      owner = (await requirePerm("ai.use")).ownerId;
     } catch {
       return Response.json({ error: "unauthorized" }, { status: 401 });
     }

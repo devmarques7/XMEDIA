@@ -3,6 +3,7 @@ import { normalizeInvoice, type Invoice } from "@/lib/invoice";
 import { invoiceEmail } from "@/lib/invoiceEmail";
 import { invoiceFrom, sendEmail } from "@/lib/inviteEmail";
 import { HttpError, fail, requirePerm, serviceClient } from "@/lib/server/admin";
+import { invoiceCc, invoiceLinkUrl, invoiceToken } from "@/lib/server/invoiceLink";
 
 export const maxDuration = 60;
 const EMAIL = /^[^@\s<>]+@[^@\s<>]+\.[^@\s<>]+$/;
@@ -12,7 +13,7 @@ const MAX_PDF = 4 * 1024 * 1024;
 export async function GET() {
   try {
     await requirePerm("finance.view");
-    return Response.json({ from: invoiceFrom(), configured: Boolean(process.env.RESEND_API_KEY?.trim()) });
+    return Response.json({ from: invoiceFrom(), cc: invoiceCc(), configured: Boolean(process.env.RESEND_API_KEY?.trim()) });
   } catch (e) {
     return fail(e);
   }
@@ -41,17 +42,20 @@ export async function POST(req: Request) {
 
     const lang: Lang = b.lang === "pt" || b.lang === "nl" ? b.lang : "en";
     const origin = new URL(req.url).origin;
-    const mail = invoiceEmail(inv, { lang, origin, name: b.name, message: String(b.message ?? "").slice(0, 2000) });
+    const viewLink = invoiceLinkUrl(origin, invoiceToken(inv, ownerId));
+    const mail = invoiceEmail(inv, { lang, origin, name: b.name, message: String(b.message ?? "").slice(0, 2000), viewLink });
+    // cópia sempre para contact@mediamarques.com (INVOICE_CC), sem repetir quem já recebe
+    const allCc = [...new Set([...cc, ...invoiceCc()])].filter((x) => x !== to);
     const filename = (String(b.filename ?? "").replace(/[\\/\r\n]/g, "").slice(0, 120) || `${inv.number}.pdf`).replace(/(?<!\.pdf)$/i, ".pdf");
-    const res = await sendEmail(to, mail, { from: invoiceFrom(), cc: cc.length ? cc : undefined, attachments: [{ filename, content: pdf.toString("base64") }] });
+    const res = await sendEmail(to, mail, { from: invoiceFrom(), cc: allCc.length ? allCc : undefined, attachments: [{ filename, content: pdf.toString("base64") }] });
     if (!res.sent) return Response.json({ sent: false, reason: res.reason, from: invoiceFrom() });
 
     const at = new Date().toISOString();
-    const next: Invoice = { ...inv, status: inv.status === "draft" ? "sent" : inv.status, sent_log: [...(inv.sent_log ?? []), { at, to, ...(cc.length ? { cc } : {}), by: user.email ?? undefined, email_id: res.id }] };
+    const next: Invoice = { ...inv, status: inv.status === "draft" ? "sent" : inv.status, sent_log: [...(inv.sent_log ?? []), { at, to, ...(allCc.length ? { cc: allCc } : {}), by: user.email ?? undefined, email_id: res.id }] };
     const { created_at: _c, updated_at: _u, ...data } = next;
     const { error } = await db.from("invoices").update({ status: next.status, data }).eq("id", inv.id).eq("owner_id", ownerId);
     if (error) throw error;
-    return Response.json({ sent: true, from: invoiceFrom(), to, status: next.status, at });
+    return Response.json({ sent: true, from: invoiceFrom(), to, cc: allCc, status: next.status, at, link: viewLink });
   } catch (e) {
     return fail(e);
   }
