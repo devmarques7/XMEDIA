@@ -12,6 +12,9 @@ import { Icon } from "@/components/Icon";
 import { Select } from "@/components/Select";
 import { Toast, useToast } from "@/components/ui";
 import { Avatar } from "@/components/team/Avatar";
+import { InviteBadge } from "@/components/team/InvitesView";
+import { inviteState, needsInviteAction } from "@/lib/inviteState";
+import { memberApi } from "@/lib/memberApi";
 import { TaskKanban } from "@/components/team/TaskKanban";
 import { useStudio } from "@/components/team/useStudio";
 import { phaseOf } from "@/lib/customer";
@@ -37,6 +40,25 @@ export default function MemberPage() {
   const [planFor, setPlanFor] = useState<string | null>(null);
   const [rate, setRate] = useState<number | null>(null);
   const [cur, setCur] = useState<Currency | null>(null);
+  const [inviting, setInviting] = useState("");
+
+  /** Reenvia o convite por email (lembrete) ou gera e copia um link novo; mostra o motivo real se o email falhar. */
+  async function remind(mail: boolean) {
+    if (!m) return;
+    setInviting(mail ? "mail" : "link");
+    try {
+      const r = await memberApi.invite(m.id, mail);
+      if (mail) setToast(r.email.sent ? t("inv.sent", { email: m.email }) : r.email.reason === "no_provider" ? t("ti.mailFail") : t("ti.mailFailWhy", { r: (r.email.reason ?? "").replace(/^provider_/, "").slice(0, 160) }));
+      else {
+        await navigator.clipboard.writeText(r.link).catch(() => {});
+        setToast(t("tinv.linkCopied", { name: m.name }));
+      }
+      S.reload();
+    } catch (e) {
+      setToast((e as Error).message);
+    }
+    setInviting("");
+  }
 
   if (!S.customers) return <AppShell>{null}</AppShell>;
   if (!person)
@@ -87,6 +109,21 @@ export default function MemberPage() {
               {person.name}
             </h1>
             <span className="muted small">{person.email}</span>
+            {m && (
+              <div className="mb-invite" data-testid="mb-invite">
+                <InviteBadge m={m} />
+                {needsInviteAction(inviteState(m)) && m.email && (
+                  <>
+                    <button className="btn small accent" onClick={() => remind(true)} disabled={!!inviting} data-testid="mb-remind">
+                      <Icon name="mail" size={13} /> {inviting === "mail" ? "…" : inviteState(m) === "not_invited" ? t("inv.send") : t("tinv.remind")}
+                    </button>
+                    <button className="btn small ghost" onClick={() => remind(false)} disabled={!!inviting} title={t("tinv.copyHint")}>
+                      <Icon name="link" size={13} /> {t("inv.copy")}
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <div className="row" style={{ gap: 6 }}>

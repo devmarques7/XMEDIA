@@ -3547,3 +3547,5 @@ button.fin-tile:hover, button.fin-tile[aria-pressed="true"] { border-color: var(
 .tinv-dot { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--accent); color: var(--accent-ink, #fff); font-size: 11px; margin-left: 4px; }
 .mr-name .label { margin-left: 6px; font-size: 9.5px; }
 @media (max-width: 1100px) { .tinv-row { grid-template-columns: minmax(0, 1fr) auto; } .tinv-dates { grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); } .tinv-act { grid-column: 1 / -1; justify-content: flex-start; } }
+.mb-invite { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.calgrid.solo { grid-template-columns: minmax(0, 1fr); }
