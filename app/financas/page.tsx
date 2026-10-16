@@ -16,6 +16,8 @@ import { downloadInvoice } from "@/lib/invoicePdf";
 import { INVOICE_SAVED } from "@/lib/ai/exec";
 import { invoiceStore, ensureBundledInvoices } from "@/lib/invoiceStore";
 import { isoDay, pad } from "@/lib/util";
+import { QUICK_FILTERS, dueDate, financeDash, isOverdue, matchesFilter, type QuickFilter } from "@/lib/invoiceStats";
+import { MonthBars } from "@/components/finance/MonthBars";
 
 const STATUS_TONE: Record<InvoiceStatus, string> = { draft: "muted", sent: "tone-warn", paid: "tone-ok" };
 const FIRST_NUMBER = 50; // a última invoice emitida fora da app foi a #0049
@@ -31,6 +33,11 @@ export default function FinancePage() {
   const { isOpen, onRow } = useRowExpand();
   const [cat, setCat] = useState<InvoiceCategory | "all" | "none">("all");
   const [yr, setYr] = useState<string>("all");
+  // filtro rápido (enviadas, por pagar, em atraso…); ?f= abre já filtrado
+  const [qf, setQf] = useState<QuickFilter>(() => {
+    const f = typeof location !== "undefined" ? new URLSearchParams(location.search).get("f") : null;
+    return (QUICK_FILTERS as readonly string[]).includes(f ?? "") ? (f as QuickFilter) : "all";
+  });
   const [jsonText, setJsonText] = useState("");
   const openJson = useCallback((text = "") => {
     setJsonText(text);
@@ -70,19 +77,18 @@ export default function FinancePage() {
     }
     return m;
   }, [inYear]);
-  const rows = useMemo(() => inYear.filter(({ inv }) => cat === "all" || (inv.category ?? "none") === cat), [inYear, cat]);
-  const kpi = useMemo(() => {
-    const k = { invoiced: 0, paid: 0, open: 0, btw: 0 };
-    for (const { inv, t: tt } of all) {
-      if (inv.currency !== "EUR" || inv.status === "draft" || inv.void) continue;
-      const iq = Math.floor(new Date(inv.issue_date + "T12:00:00").getMonth() / 3) + 1;
-      if (inv.issue_date.startsWith(year)) k.invoiced += tt.total;
-      if (inv.status === "paid") k.paid += tt.total;
-      else k.open += tt.total;
-      if (inv.issue_date.startsWith(year) && iq === q) k.btw += tt.btwAmount;
-    }
-    return k;
-  }, [all, year, q]);
+  const today = isoDay();
+  const dash = useMemo(() => financeDash(list ?? [], today), [list, today]);
+  const rows = useMemo(() => inYear.filter(({ inv }) => (cat === "all" || (inv.category ?? "none") === cat) && matchesFilter(inv, qf, today)), [inYear, cat, qf, today]);
+  const pickQf = (f: QuickFilter) => {
+    setQf(f);
+    try {
+      const u = new URL(location.href);
+      if (f === "all") u.searchParams.delete("f");
+      else u.searchParams.set("f", f);
+      history.replaceState(null, "", u);
+    } catch {}
+  };
 
   async function create(seed?: Partial<Invoice>) {
     const today = isoDay();
@@ -150,21 +156,47 @@ export default function FinancePage() {
       )}
 
       {access && !can(access, "finance.view") && <p className="note"><Icon name="lock" size={14} /> {t("rl.draftOnly")}</p>}
-      {can(access, "finance.view") && (
-      <div className="widgets teamstats" style={{ paddingTop: 0, marginBottom: 14 }}>
-        {[
-          [t("fin.invoiced", { year }), kpi.invoiced],
-          [t("fin.outstanding"), kpi.open],
-          [t("fin.btwQuarter", { q }), kpi.btw],
-        ].map(([label, v]) => (
-          <div key={label as string} className="w span-4">
-            <div className="label muted">{label}</div>
-            <div className="num" style={{ marginTop: 12 }}>
-              {eur(v as number)}
+      {can(access, "finance.view") && list && list.length > 0 && (
+        <>
+          <div className="fin-dash" data-testid="fin-dash">
+            <div className="fin-tile">
+              <span className="label muted">{t("fin.invoiced", { year })}</span>
+              <span className="num">{eur(dash.invoiced)}</span>
+            </div>
+            <button className="fin-tile" onClick={() => pickQf(qf === "unpaid" ? "all" : "unpaid")} aria-pressed={qf === "unpaid"}>
+              <span className="label muted">{t("fin.outstanding")}</span>
+              <span className="num">{eur(dash.outstanding.total)}</span>
+              <span className="muted small">{t("fin.d.n", { n: dash.outstanding.n })}</span>
+            </button>
+            <button className={`fin-tile ${dash.overdue.n ? "warn" : ""}`} onClick={() => pickQf(qf === "overdue" ? "all" : "overdue")} aria-pressed={qf === "overdue"}>
+              <span className="label muted">{t("fin.d.overdue")}</span>
+              <span className="num">{eur(dash.overdue.total)}</span>
+              <span className="muted small">{t("fin.d.n", { n: dash.overdue.n })}</span>
+            </button>
+            <div className="fin-tile">
+              <span className="label muted">{t("fin.paid")} {year}</span>
+              <span className="num">{eur(dash.received)}</span>
+            </div>
+            <div className="fin-tile">
+              <span className="label muted">{t("fin.btwQuarter", { q })}</span>
+              <span className="num">{eur(dash.btwQuarter)}</span>
             </div>
           </div>
-        ))}
-      </div>
+          <div className="fin-chart">
+            <span className="label muted">{t("fin.d.months")}</span>
+            <MonthBars months={dash.months} locale={locale} money={(v) => eur(v)} label={t("fin.d.months")} paidLabel={t("fin.paid")} />
+          </div>
+        </>
+      )}
+
+      {all.length > 0 && (
+        <div className="fin-quick" role="group" aria-label="Status" data-testid="fin-quick">
+          {QUICK_FILTERS.map((f) => (
+            <button key={f} className={`chip${qf === f ? " on" : ""}`} onClick={() => pickQf(f)} aria-pressed={qf === f} data-testid={`fin-q-${f}`}>
+              {t(`fin.q.${f}` as "fin.q.all")} <span className="muted">{dash.counts[f]}</span>
+            </button>
+          ))}
+        </div>
       )}
 
       {all.length > 0 && (
@@ -200,7 +232,7 @@ export default function FinancePage() {
           </span>
           {can(access, "finance.view") && (
             <span className="muted small">
-              {t("fin.paid")} · {eur(kpi.paid)}
+              {t("fin.paid")} {year} · {eur(dash.received)}
             </span>
           )}
         </div>
@@ -224,6 +256,7 @@ export default function FinancePage() {
                   const actions: RowAction[] = [
                     { key: "open", label: t("ra.edit"), icon: "edit", href: `/financas/${inv.id}` },
                     { key: "pdf", label: busy === inv.id ? "…" : t("fin.download"), icon: "download", onClick: () => pdf(inv) },
+                    { key: "send", label: t("fin.send"), icon: "send", href: `/financas/${inv.id}?send=1`, allowed: fin && !inv.void },
                     { key: "original", label: t("ra.original"), icon: "page", href: inv.attachment ? `/api/invoices/file/${inv.attachment}` : undefined, external: true, allowed: !!inv.attachment },
                     { key: "duplicate", label: t("ra.duplicate"), icon: "copy", onClick: () => duplicate(inv), allowed: fin || can(access, "invoices.create") },
                     { key: "delete", label: t("ra.delete"), icon: "trash", danger: true, onClick: () => remove(inv), allowed: fin },
@@ -263,6 +296,11 @@ export default function FinancePage() {
                               </option>
                             ))}
                           </Select>
+                          {isOverdue(inv, today) && (
+                            <span className="chip small" title={dueDate(inv)} style={{ marginLeft: 6 }} data-testid="fin-overdue">
+                              ! {t("fin.d.overdue")}
+                            </span>
+                          )}
                         </td>
                         <td className="rt-act">
                           <RowActions actions={actions} />
