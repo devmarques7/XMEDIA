@@ -107,23 +107,36 @@ export function senderFrom(raw = process.env.INVITE_FROM) {
   return name ? `${name} <${DEFAULT_FROM.match(/<(.+)>/)![1]}>` : DEFAULT_FROM;
 }
 
+/** Remetente das invoices: INVOICE_FROM, ou invoices@mediamarques.com (o mesmo domínio verificado na Resend). */
+export function invoiceFrom(raw = process.env.INVOICE_FROM) {
+  const v = (raw ?? "").trim();
+  if (!v) return "MediaMarques Invoices <invoices@mediamarques.com>";
+  const ok = senderFrom(v);
+  // só o nome → esse nome com invoices@ (nunca o contact@ dos outros emails)
+  return ok === v ? v : `${v.replace(/[<>"]/g, "").trim() || "MediaMarques Invoices"} <invoices@mediamarques.com>`;
+}
+
+export type EmailAttachment = { filename: string; content: string /* base64 */ };
+
 /** Envia pela Resend (RESEND_API_KEY). Sem chave devolve false e a app mostra o link para partilhar. */
-export async function sendEmail(to: string, mail: { subject: string; text: string; html: string }, opts: { cc?: string[]; replyTo?: string } = {}) {
+export async function sendEmail(to: string, mail: { subject: string; text: string; html: string }, opts: { cc?: string[]; replyTo?: string; from?: string; attachments?: EmailAttachment[] } = {}) {
   const key = process.env.RESEND_API_KEY;
   if (!key) return { sent: false as const, reason: "no_provider" };
   const r = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from: senderFrom(),
+      from: opts.from ?? senderFrom(),
       to: [to],
       ...(opts.cc?.length ? { cc: opts.cc } : {}),
       ...(opts.replyTo ? { reply_to: opts.replyTo } : {}),
+      ...(opts.attachments?.length ? { attachments: opts.attachments } : {}),
       subject: mail.subject,
       html: mail.html,
       text: mail.text,
     }),
   });
   if (!r.ok) return { sent: false as const, reason: `provider_${r.status}: ${(await r.text()).slice(0, 200)}` };
-  return { sent: true as const };
+  const j = (await r.json().catch(() => ({}))) as { id?: string };
+  return { sent: true as const, id: j.id };
 }

@@ -50,6 +50,8 @@ export type Invoice = {
   /** Avisos de qualidade dos dados encontrados na importação. */
   flags?: string[];
   customer_id?: string | null;
+  /** Envios por email (de invoices@…): quando, para quem, por quem. */
+  sent_log?: { at: string; to: string; cc?: string[]; by?: string; email_id?: string }[];
   created_at?: string;
   updated_at?: string;
 };

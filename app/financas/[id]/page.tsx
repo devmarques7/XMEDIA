@@ -23,6 +23,7 @@ import {
   type QrMode,
 } from "@/lib/invoice";
 import { downloadInvoice, invoiceBlob } from "@/lib/invoicePdf";
+import { SendInvoice } from "@/components/SendInvoice";
 import { INVOICE_SAVED } from "@/lib/ai/exec";
 import { invoiceStore } from "@/lib/invoiceStore";
 import { pad } from "@/lib/util";
@@ -42,6 +43,8 @@ export default function InvoiceEditor() {
   const [rendering, setRendering] = useState(false);
   const [jsonOpen, setJsonOpen] = useState(false);
   const [jsonText, setJsonText] = useState("");
+  // ?send=1 (ação "Enviar por email" da lista) abre logo o envio
+  const [autoSend] = useState(() => typeof location !== "undefined" && new URLSearchParams(location.search).get("send") === "1");
   // largar um .json em qualquer sítio da página abre a caixa já preenchida
   const dropping = useWindowDrop(
     useCallback((text: string) => {
@@ -135,6 +138,11 @@ export default function InvoiceEditor() {
           <span className="muted small">
             {inv.client.name || "—"} · {money(tt.total, inv.currency)} · {saved ? `${t("fin.saved")}` : "…"}
           </span>
+          {!!inv.sent_log?.length && (
+            <span className="muted small" style={{ display: "block" }} data-testid="inv-sent-log">
+              <Icon name="send" size={12} /> {t("fin.sentLog", { n: inv.sent_log.length, when: new Date(inv.sent_log.at(-1)!.at).toLocaleString(undefined, { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }), to: inv.sent_log.at(-1)!.to })}
+            </span>
+          )}
         </div>
         <div className="row">
           <div className="seg only-narrow" role="group">
@@ -145,6 +153,16 @@ export default function InvoiceEditor() {
               {t("fin.preview")}
             </button>
           </div>
+          {can(access, "finance.view") && (
+            <SendInvoice
+              inv={inv}
+              autoOpen={autoSend}
+              onSent={(m) => {
+                setToast(m);
+                invoiceStore.get(id).then((x) => x && setInv(x)); // estado "enviada" + registo do envio
+              }}
+            />
+          )}
           <button className="btn accent" onClick={() => downloadInvoice(inv).catch((e) => setToast(e.message))}>
             <Icon name="download" size={14} /> PDF
           </button>
