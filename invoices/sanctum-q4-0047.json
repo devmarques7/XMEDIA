@@ -1,0 +1,21 @@
+{
+  "number": "Q4 - #0047",
+  "issue_date": "2026-10-03",
+  "currency": "EUR",
+  "btw": "auto",
+  "client": {
+    "name": "Sanctum BV — Attn. Luuk Melisse",
+    "address": "Singel 174\n1015 AJ Amsterdam\nNetherlands",
+    "country": "NL",
+    "vat": "",
+    "email": ""
+  },
+  "items": [
+    { "description": "® [MM] Production Package / Personal Brand", "qty": 40, "rate": 40 },
+    { "description": "® [MM] Production Day / On-Location", "qty": 5, "rate": 300 },
+    { "description": "® [MM] Reimbursable / Transport (receipts)", "qty": 1, "rate": 110.9 },
+    { "description": "® [MM] Reimbursable / Food (receipts)", "qty": 1, "rate": 81.48 },
+    { "description": "® [MM] Partnership Discount — 1 Production Day", "qty": 1, "rate": -300 }
+  ],
+  "note": "Re-issued on 13 Oct 2026 with the full billing address requested by Sanctum Finance; replaces the version sent on 6 Oct 2026 — total unchanged. Production days: Ibiza (4) + AMS Festival Frequency cover (1); one day discounted. Reimbursable expenses as per receipts — Transport (taxis): Day 2 €8.65 · Day 3 €25.80 · Day 4 €67.80 · Six Senses transfer €8.65 = €110.90. Food: Day 1 €18.90 · Day 4 €38.95 · Other €23.63 = €81.48. Receipts available upon request."
+}

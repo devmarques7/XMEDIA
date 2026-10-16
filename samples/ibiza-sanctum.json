@@ -1,0 +1,1137 @@
+{
+  "format": "preprod/v1",
+  "title": "Sanctum Retreat Ibiza — Back to Source",
+  "data": {
+    "client": "Sanctum — Luuk Melisse",
+    "description": "Back to Source · Photo & Video Briefing — Sanctum Retreat Ibiza, 1–4 Out 2026. Shot schedule e checklist on-site. Cada divisão = um bloco do horário; cada cena = algo a captar, um check on-site (☐) ou uma tarefa de preparação (PREP). Regras de refeição: nada de pessoas a comer/engolir — só ambiente, set-up e beauty shots premium da comida.",
+    "shootDate": "2026-10-01",
+    "definitions": [
+      {
+        "id": "2d024054-9ade-4e33-bca4-ca48fa63e1c9",
+        "label": "Formato",
+        "value": "PHOTOS + VIDEO (+ DRONE no domingo)"
+      },
+      {
+        "id": "95f4878b-5b3e-4ff6-bb62-a9f31d12d3ee",
+        "label": "Equipa",
+        "value": "Marques (foto + vídeo) · Gab (direção) · Carolina (produção) · Jessica (apoio) · Arno (drone, hike) · Luuk (talent)"
+      },
+      {
+        "id": "11394473-68a4-402b-b3b2-5a5ba0766244",
+        "label": "Áudio",
+        "value": "Mic ligado em todas as aulas, entrevista, painel e cerimónias"
+      },
+      {
+        "id": "c4b35b03-1884-4466-a9fc-9ef6a92043dd",
+        "label": "Regras de refeição",
+        "value": "Regras de refeição: nada de pessoas a comer/engolir — só ambiente, set-up e beauty shots premium da comida."
+      },
+      {
+        "id": "94f5681e-d2e0-4739-92f7-adbfa2c78e68",
+        "label": "Pendentes (TBC)",
+        "value": "Local da entrevista/photoshoot · Life Design · Breathwork · Painel · Testemunhos · hora/local do DJ set"
+      },
+      {
+        "id": "727f008a-5852-4a95-afcc-469c12b76f98",
+        "label": "Fonte",
+        "value": "Photo & Video Briefing - Ibiza - Shot Schedule.pdf"
+      }
+    ],
+    "reels": [
+      {
+        "id": "a3c9f465-5eca-44da-aa3f-c5050a9d7989",
+        "title": "45s — Full retreat recap",
+        "concept": "Recap completo do retreat (1–4 Out): chegadas, aulas, cerimónias, jantares, staged B-roll e momentos de comunidade.",
+        "expiresAt": "",
+        "status": "aprovado"
+      },
+      {
+        "id": "4465266e-0ddd-4cee-bfc7-859c9aed799e",
+        "title": "30s — Sanctum x brand partners",
+        "concept": "Todos os produtos dos parceiros em contexto de retreat (turndown / sleep ritual) + goodie bags.",
+        "expiresAt": "",
+        "status": "aprovado"
+      },
+      {
+        "id": "717d24b2-5e31-4426-8a29-a4fb1249ae41",
+        "title": "20s — Sanctum x Pangaia",
+        "concept": "Vídeo dedicado à Pangaia — cobrir bem no sponsor room.",
+        "expiresAt": "",
+        "status": "aprovado"
+      },
+      {
+        "id": "ff86935f-4136-4ab5-9cd2-298cc9b4ac6c",
+        "title": "20s — Sanctum x JJ Martin",
+        "concept": "Guests com as t-shirts JJ Martin 'Raise Your Vibrations' na Opening Class & Cacao Ceremony.",
+        "expiresAt": "",
+        "status": "aprovado"
+      },
+      {
+        "id": "17ef11e1-f87a-4e2e-8819-83946e5581fa",
+        "title": "Luuk reels",
+        "concept": "Reels do Luuk: aulas, staged B-roll, painel, lifestyle.",
+        "expiresAt": "",
+        "status": "aprovado"
+      },
+      {
+        "id": "9cf8948c-8a78-4eac-93f7-56e4a117df1d",
+        "title": "Luuk socials — Retreat + Sanctum philosophy",
+        "concept": "Entrevista curta: o que é um Sanctum retreat e porquê · quem participa / o que esperar · a filosofia Sanctum.",
+        "expiresAt": "",
+        "status": "aprovado"
+      },
+      {
+        "id": "2f13b5eb-19be-4da6-82a3-82fb637e2178",
+        "title": "Luuk socials — thumbnails",
+        "concept": "AGORA nas rochas, lifestyle do Luuk, markers para thumbnails futuras.",
+        "expiresAt": "",
+        "status": "aprovado"
+      },
+      {
+        "id": "048a37bf-7e6c-460b-bd3b-a66d2c70f9b8",
+        "title": "Testimonials",
+        "concept": "5 participantes pré-acordados a partilhar o que o retreat significou — com as emoções frescas.",
+        "expiresAt": "",
+        "status": "aprovado"
+      },
+      {
+        "id": "60b35f5a-dad0-4335-8eb8-12b1b63afd86",
+        "title": "B-roll library",
+        "concept": "Biblioteca de B-roll: hotel vazio, vistas, detalhes, ambiente, refeições.",
+        "expiresAt": "",
+        "status": "aprovado"
+      }
+    ],
+    "locations": [
+      {
+        "id": "e33b7aa0-9b5b-4010-8e31-0f5caadebe36",
+        "name": "Rocks / bay",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": ""
+      },
+      {
+        "id": "3f5a2090-e6b9-4fe9-b941-0f73b8606405",
+        "name": "Hotel interior & exterior",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": "Spa, pool, vistas — vazio antes dos guests."
+      },
+      {
+        "id": "6f97c836-fe72-4665-ad9e-734bc902125f",
+        "name": "Sponsor room (studio)",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": "Quarto de hotel montado como estúdio temporário."
+      },
+      {
+        "id": "a1408e15-e09f-4981-abd1-598483f13cc0",
+        "name": "Front desk / lobby",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": ""
+      },
+      {
+        "id": "abc51497-834a-438a-9568-8cc8b6cb13a2",
+        "name": "Yoga Roof",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": ""
+      },
+      {
+        "id": "e4acf88b-7b08-4a79-8697-084f044eb3d8",
+        "name": "Orchard",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": "Jantares e afterparty."
+      },
+      {
+        "id": "543954f7-23e4-4717-88f7-6914fa979116",
+        "name": "Yoga Deck",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": "Nascer do sol."
+      },
+      {
+        "id": "cf627b86-b2dd-4275-8f80-19d46a3dc3e5",
+        "name": "Courtyard",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": ""
+      },
+      {
+        "id": "043a12f9-1891-42eb-91c3-ea49cf109dff",
+        "name": "Market",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": ""
+      },
+      {
+        "id": "41b3601f-3ab7-44c7-8373-ff805c150b81",
+        "name": "North",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": ""
+      },
+      {
+        "id": "985ee427-115f-489e-8f62-d308c223b121",
+        "name": "Market Lobby",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": "Ponto de encontro da Fire Ceremony."
+      },
+      {
+        "id": "a037ae07-2b5b-4407-b654-eeb59555daf3",
+        "name": "Infinity pool",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": ""
+      },
+      {
+        "id": "f650968f-8a17-44e5-bb97-29bb3ce24a18",
+        "name": "Steam sauna",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": ""
+      },
+      {
+        "id": "d9e374c6-e878-4554-83c0-182bb9a98934",
+        "name": "TBC",
+        "address": "Ibiza",
+        "mapsUrl": "",
+        "notes": "Carolina confirma o local."
+      }
+    ],
+    "sessions": [
+      {
+        "id": "231c67f2-c680-4dc5-90f8-57c3cf15a8a1",
+        "label": "Qui 1 · Pré-retreat",
+        "date": "2026-10-01",
+        "start": "08:00",
+        "end": "15:00",
+        "locationId": "3f5a2090-e6b9-4fe9-b941-0f73b8606405",
+        "notes": "Produção antes da chegada dos guests. Luuk + Marques.",
+        "blocks": [
+          {
+            "id": "64a7db4f-c812-425e-a258-a6527df9eea6",
+            "title": "B-Roll photos & videos",
+            "start": "08:00",
+            "end": "08:45",
+            "scenes": [
+              {
+                "id": "d0c01d05-be2c-4ea7-bd8b-2f837436aac8",
+                "title": "PREP · Luuk & Marques no local às 08:00",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "f16cd1bf-0ea3-47e6-ada7-1a147e35a57e",
+                "title": "Captar: AGORA nas rochas, lifestyle do Luuk, markers para thumbnails",
+                "description": "📍 Rocks / bay\n🎙 Áudio: —\n🎞 PHOTOS + VIDEO\n🎬 Direção: Gravar antes do retreat começar\n➜ Alimenta: Luuk socials — thumbnails · Luuk reels",
+                "links": [],
+                "done": false,
+                "reelId": "2f13b5eb-19be-4da6-82a3-82fb637e2178"
+              }
+            ]
+          },
+          {
+            "id": "1357c5c4-2453-4152-a0ba-f870454a5558",
+            "title": "Interview Luuk @ Room",
+            "start": "08:45",
+            "end": "10:00",
+            "scenes": [
+              {
+                "id": "6838beb7-d101-4aa3-81af-009497ae54b5",
+                "title": "PREP · Owner: Marques",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "9f56b20e-8d09-43d6-95aa-889b6575a09e",
+                "title": "Captar: Interior e exterior do hotel, spa & pool vazios, vistas, detalhes",
+                "description": "📍 Hotel interior & exterior\n🎙 Áudio: —\n🎞 PHOTOS + VIDEO\n🎬 Direção: Construir a B-roll library antes dos guests chegarem\n➜ Alimenta: B-roll library · 45s — Full retreat recap · Luuk reels",
+                "links": [],
+                "done": false,
+                "reelId": "60b35f5a-dad0-4335-8eb8-12b1b63afd86"
+              }
+            ]
+          },
+          {
+            "id": "79b4410e-0647-4457-a674-3b7ebaca6233",
+            "title": "Photoshoot Luuk",
+            "start": "10:00",
+            "end": "11:30",
+            "scenes": [
+              {
+                "id": "a45b8ce9-5064-479c-92eb-2d4375701f01",
+                "title": "PREP · Luuk: preparar talking points",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "2103323c-30af-4ce0-bd5a-d2a17cb32ec8",
+                "title": "Captar: Entrevista curta: o que é um Sanctum retreat e porquê · quem participa / o que esperar · a filosofia Sanctum",
+                "description": "📍 TBC (in room)\n🎙 Áudio: Entrevista completa com voz\n🎞 VIDEO\n➜ Alimenta: Luuk socials — Retreat + Sanctum philosophy",
+                "links": [],
+                "done": false,
+                "reelId": "9cf8948c-8a78-4eac-93f7-56e4a117df1d"
+              },
+              {
+                "id": "ef9ba4ac-b32d-4ee9-9922-286494fbe1fe",
+                "title": "☐ Mic ligado & voz gravada",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "9cf8948c-8a78-4eac-93f7-56e4a117df1d"
+              },
+              {
+                "id": "b37adea2-c010-41af-b46a-63795d46185e",
+                "title": "Pergunta 1 · O que é um Sanctum retreat e porque o organizamos",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "9cf8948c-8a78-4eac-93f7-56e4a117df1d"
+              },
+              {
+                "id": "5b437177-cf63-4889-93a7-d292d2970050",
+                "title": "Pergunta 2 · Quem participa / o que esperar",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "9cf8948c-8a78-4eac-93f7-56e4a117df1d"
+              },
+              {
+                "id": "c4c92421-b360-4dfd-ac75-d3eede509106",
+                "title": "Pergunta 3 · A filosofia Sanctum",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "9cf8948c-8a78-4eac-93f7-56e4a117df1d"
+              }
+            ]
+          },
+          {
+            "id": "7faced76-0c82-4447-a5d1-b763e31f758f",
+            "title": "Location B-roll (part 2)",
+            "start": "12:00",
+            "end": "13:00",
+            "scenes": [
+              {
+                "id": "eecd293c-3f60-49f8-b794-303f1fb1aca7",
+                "title": "Captar: O que faltou da parte 1 + detalhes do set-up do sponsor room",
+                "description": "📍 Hotel interior & exterior\n🎙 Áudio: —\n🎞 PHOTOS + VIDEO\n➜ Alimenta: B-roll library · 45s — Full retreat recap · Luuk reels",
+                "links": [],
+                "done": false,
+                "reelId": "60b35f5a-dad0-4335-8eb8-12b1b63afd86"
+              }
+            ]
+          },
+          {
+            "id": "b6ccd4f4-bc7c-432b-aade-1779b7b848c1",
+            "title": "Sponsor production room (staged)",
+            "start": "13:00",
+            "end": "15:00",
+            "scenes": [
+              {
+                "id": "12e13999-8495-4d27-b5df-4a2de0e61822",
+                "title": "PREP · Carolina: TODOS os produtos pré-alocados e à espera no quarto antes do slot",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "4b848a7e-9a48-49ba-b44a-998f8309783b",
+                "title": "Captar: Todos os produtos dos sponsors encenados como durante o retreat (turndown / sleep ritual): na cama, no banho, no spa",
+                "description": "📍 Sponsor room (studio)\n🎙 Áudio: —\n🎞 PHOTOS + VIDEO\n🎬 Direção: Gab dirige, colocação improvisada — terminar em 1–2 h\n➜ Alimenta: 30s — Sanctum x brand partners · 20s — Sanctum x Pangaia",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "c9bc5d03-eb1e-4eef-b46a-bee77e534bec",
+                "title": "☐ Todas as marcas marcadas (lista abaixo)",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "463647bc-ff33-4b20-b9a0-83fb2f68ffa8",
+                "title": "☐ Pangaia bem coberta (vídeo próprio de 20s)",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "1082b29e-25af-4f0b-b1b7-f8c5cf930c97",
+                "title": "Marca: Intelligent Change",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "3cb0616b-7d59-43c0-a511-02ef9d7b99d0",
+                "title": "Marca: Ground",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "d46df19a-aca0-4494-abff-111ca0a9b2ff",
+                "title": "Marca: Natch Labs",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "8616374d-81f3-48bc-a6ab-e92bfc5c1c52",
+                "title": "Marca: Pangaia",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono. Cobrir MUITO bem: precisa do próprio vídeo de 20s.",
+                "links": [],
+                "done": false,
+                "reelId": "717d24b2-5e31-4426-8a29-a4fb1249ae41"
+              },
+              {
+                "id": "56d506e5-7fbf-4a9c-a0d2-c9ee6f30af20",
+                "title": "Marca: Subtle Energies",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "c3674725-f234-4a8a-a8d3-2a8108c82f2a",
+                "title": "Marca: Julia C",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "482974c0-1302-4977-a085-9918c6eec618",
+                "title": "Marca: Sephora",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "1108aef2-07af-432a-b96a-cc2307e56617",
+                "title": "Marca: Cosmic Dealer",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "d43228e4-07c3-4625-94ab-0a550f6d31bd",
+                "title": "Marca: Susanne Kaufmann",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "ef920df8-b7c6-4384-8614-c5b398c21df2",
+                "title": "Marca: Nurturing Cacao",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "139942f0-1ca8-458d-a40d-f7ae836a48c9",
+                "title": "Marca: Cellaro",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "b1c6be9a-1f54-489f-95ae-623cdaa54587",
+                "title": "Marca: BIOGENA",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "952843ca-ebe8-426e-9b00-e5aad3494108",
+                "title": "Marca: We Shut It",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "d1c0c2ab-0542-4374-869b-a8b381ee48ba",
+                "title": "Marca: Google Fitbit",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "aa26692b-ed81-4833-b1ea-0ae4322df8de",
+                "title": "Marca: Nomadic Spirits",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "56cd28a8-05b1-42f3-bd59-6a25a50b85c1",
+                "title": "Marca: Sanctum (own brand)",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "d2b2364d-f44c-4910-929b-2b72aada20a6",
+                "title": "Marca: Froyja",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "210574ff-52c6-4e80-ae1e-8d6f2e4ee46b",
+                "title": "Marca: La DoubleJ",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              },
+              {
+                "id": "52ea49d7-4f6f-4bc8-9253-a4423890eac0",
+                "title": "Marca: Wild Water Wild Hydration",
+                "description": "Produto na cama / banho / spa — ritual turndown/sono.",
+                "links": [],
+                "done": false,
+                "reelId": "4465266e-0ddd-4cee-bfc7-859c9aed799e"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "785200bb-afc8-4786-aa40-a80c53586b9f",
+        "label": "Qui 1 · Retreat dia 1",
+        "date": "2026-10-01",
+        "start": "15:00",
+        "end": "22:00",
+        "locationId": "a1408e15-e09f-4981-abd1-598483f13cc0",
+        "notes": "Início do retreat.",
+        "blocks": [
+          {
+            "id": "2523458d-a765-4c0d-b0b7-02a5835933a8",
+            "title": "Arrival",
+            "start": "15:00",
+            "end": "17:30",
+            "scenes": [
+              {
+                "id": "6d6adc04-55cb-4dd2-a35d-25c7b252810e",
+                "title": "Captar: Momentos de boas-vindas, chegadas, abraços, welcome ritual, guests a recolher a goodie bag",
+                "description": "📍 Front desk / lobby\n🎙 Áudio: Snippets\n🎞 PHOTOS + VIDEO\n➜ Alimenta: 45s — Full retreat recap · 30s — Sanctum x brand partners",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "7998c5a7-844c-457c-9397-e131b5fc58dd",
+                "title": "☐ Recolha da goodie bag captada",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "daf5c369-ef64-4d74-a035-46b8621506e9",
+            "title": "Break Out Groups → B-roll",
+            "start": "17:30",
+            "end": "18:10",
+            "scenes": [
+              {
+                "id": "4f206fc5-2db0-4079-809d-d3c37874c059",
+                "title": "Captar: Sem conteúdo do grupo — Marques capta B-roll: vistas, detalhes, ambiente",
+                "description": "📍 —\n🎙 Áudio: —\n🎞 PHOTOS + VIDEO\n➜ Alimenta: B-roll library",
+                "links": [],
+                "done": false,
+                "reelId": "60b35f5a-dad0-4335-8eb8-12b1b63afd86"
+              }
+            ]
+          },
+          {
+            "id": "9202fd8e-9fac-43ea-92ca-dc8c4cf4cb2a",
+            "title": "Opening Sanctum Class & Cacao Ceremony",
+            "start": "18:10",
+            "end": "19:30",
+            "scenes": [
+              {
+                "id": "dfec2440-6fbc-4695-9d49-a9eb0fd2cef0",
+                "title": "PREP · Carolina + Jessica: pedir antes a participantes escolhidos para usarem a t-shirt JJ",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "20cca474-e3b2-43e8-9dce-e080511f3a8d",
+                "title": "Captar: Headphones, movimento, cacao pour e brinde, branding Nurturing Cacao, pôr do sol, guests com t-shirts JJ Martin 'Raise Your Vibrations'",
+                "description": "📍 Yoga Roof\n🎙 Áudio: Aula completa com voz\n🎞 PHOTOS + VIDEO\n➜ Alimenta: 20s — Sanctum x JJ Martin · 45s — Full retreat recap",
+                "links": [],
+                "done": false,
+                "reelId": "ff86935f-4136-4ab5-9cd2-298cc9b4ac6c"
+              },
+              {
+                "id": "d8340385-bf55-457b-bf70-77742a24ac3a",
+                "title": "☐ Pelo menos 50% da sala com t-shirts JJ Martin",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "ff86935f-4136-4ab5-9cd2-298cc9b4ac6c"
+              },
+              {
+                "id": "d924f542-e047-401c-b2c3-8c45fcde7b12",
+                "title": "☐ Mic ligado & voz gravada",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "ff86935f-4136-4ab5-9cd2-298cc9b4ac6c"
+              }
+            ]
+          },
+          {
+            "id": "e82d143c-c327-4100-a2da-54a259f25bc4",
+            "title": "Communal Dinner",
+            "start": "20:30",
+            "end": "22:00",
+            "scenes": [
+              {
+                "id": "0903f03b-300b-4d17-b0e2-7226f5cc9f96",
+                "title": "Captar: Ambiente, set-up das mesas, vista, beauty shots da comida, mesas longas, risos. Primeiros 40 min, depois wrap",
+                "description": "📍 Orchard\n🎙 Áudio: Snippets\n🎞 PHOTOS + VIDEO\n🎬 Direção: Regras de refeição: nada de pessoas a comer/engolir — só ambiente, set-up e beauty shots premium da comida. Prioridade B-roll (pôr do sol, pássaros, close-ups da mesa).\n➜ Alimenta: 45s — Full retreat recap · B-roll library",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "0510bb23-cbbd-4788-a098-ea51c9b7641d",
+        "label": "Sex 2 · Retreat dia 2",
+        "date": "2026-10-02",
+        "start": "08:00",
+        "end": "22:00",
+        "locationId": "543954f7-23e4-4717-88f7-6914fa979116",
+        "notes": "",
+        "blocks": [
+          {
+            "id": "0706dec2-0ee3-4b82-9f7d-5d80f1657a34",
+            "title": "Morning Meditation + Stretch",
+            "start": "08:00",
+            "end": "08:40",
+            "scenes": [
+              {
+                "id": "3e903d4e-a04c-4bd0-ad81-5a403f579a80",
+                "title": "Captar: Luz do nascer do sol, quietude, silhuetas, paisagens, movimentos lentos",
+                "description": "📍 Yoga Deck\n🎙 Áudio: Aula completa com voz\n🎞 PHOTOS + VIDEO\n➜ Alimenta: 45s — Full retreat recap · Luuk reels",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "de359aa8-6f47-4b88-9786-e7585e6a75fb",
+                "title": "☐ Mic ligado & voz gravada",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "509241b4-5e49-4594-9239-c70e2febcc18",
+            "title": "Breakfast → B-roll",
+            "start": "08:40",
+            "end": "10:30",
+            "scenes": [
+              {
+                "id": "d6b2b82c-ce78-4468-95aa-988ea293708c",
+                "title": "Captar: Sem conteúdo dos guests — Marques capta B-roll",
+                "description": "📍 Orchard\n🎙 Áudio: —\n🎞 PHOTOS + VIDEO\n🎬 Direção: Regras de refeição: nada de pessoas a comer/engolir — só ambiente, set-up e beauty shots premium da comida.\n➜ Alimenta: B-roll library",
+                "links": [],
+                "done": false,
+                "reelId": "60b35f5a-dad0-4335-8eb8-12b1b63afd86"
+              }
+            ]
+          },
+          {
+            "id": "92e0e83d-cc75-44ba-9797-0a52e56915ce",
+            "title": "Life Design with Alex Ikonn",
+            "start": "10:30",
+            "end": "11:15",
+            "scenes": [
+              {
+                "id": "d9f8de43-f2d1-4352-af8c-b9c1fe8a0ede",
+                "title": "PREP · Carolina: confirmar local",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "47820ab3-f2d6-4b64-94bc-1d1a4c90d486",
+                "title": "Captar: Alex a ensinar, journals e escrita, caras envolvidas",
+                "description": "📍 TBC\n🎙 Áudio: Sem voz\n🎞 PHOTOS + VIDEO\n🎬 Direção: Passar aqui a maior parte do bloco (mais para ver do que no breathwork)\n➜ Alimenta: 45s — Full retreat recap",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "09ef529c-2867-43c9-a9c0-ddb0fb587522",
+            "title": "Breathwork with Anika",
+            "start": "11:15",
+            "end": "12:30",
+            "scenes": [
+              {
+                "id": "ec5065ab-8275-4a6f-85af-6e5ea9c85406",
+                "title": "PREP · Carolina: confirmar local, horário e pedir à Anika a gravação de voz",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "d79bf5f1-3c04-4ea9-bb0f-7ba8c1f76bc5",
+                "title": "Captar: Anika a entrar e a trabalhar a sala com as penas; alguns planos gerais das pessoas deitadas",
+                "description": "📍 TBC\n🎙 Áudio: Voz da Anika só se ela estiver confortável\n🎞 PHOTOS + VIDEO\n🎬 Direção: Curto — guests deitados ~1 h a respirar intensamente. SEM close-ups de caras.\n➜ Alimenta: 45s — Full retreat recap",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "cdcc6a29-b61f-4c30-af6b-d7c8e3f71d66",
+                "title": "☐ Perguntar à Anika se aceita gravação de voz",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "ae54f2b0-21b2-44bf-a948-5a11d5fe48b9",
+            "title": "Communal Lunch",
+            "start": "13:00",
+            "end": "15:00",
+            "scenes": [
+              {
+                "id": "8ceea9ac-9913-4198-b957-cf3aa9750bbb",
+                "title": "Captar: Mesas de almoço, pessoas a conversar, tudo bonito",
+                "description": "📍 Courtyard\n🎙 Áudio: Snippets\n🎞 PHOTOS + VIDEO\n🎬 Direção: Regras de refeição: nada de pessoas a comer/engolir — só ambiente, set-up e beauty shots premium da comida.\n➜ Alimenta: 45s — Full retreat recap",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "98e2469e-146b-4dff-93c8-bce36d7e085b",
+            "title": "Back to Source — Panel with Tam & Anna B.",
+            "start": "15:00",
+            "end": "16:30",
+            "scenes": [
+              {
+                "id": "8d81caab-f3dc-4c99-a8dd-09fa3bd5a598",
+                "title": "PREP · Carolina: confirmar local",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "2484c469-9de7-436b-8dab-371321cc7635",
+                "title": "Captar: Oradores, reações do público",
+                "description": "📍 TBC\n🎙 Áudio: Painel completo com voz\n🎞 PHOTOS + VIDEO\n➜ Alimenta: 45s — Full retreat recap · Luuk reels",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "ae2e455e-01ee-4600-bb8b-c288133850c6",
+                "title": "☐ Feed de áudio limpo ligado & voz gravada",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "b360aeea-80c2-4b48-9229-9dbb1c4515dc",
+            "title": "Sanctum Sunset Class",
+            "start": "18:30",
+            "end": "19:30",
+            "scenes": [
+              {
+                "id": "1c173b5c-8815-43c2-9cb8-e0851d80be7d",
+                "title": "Captar: Hero shots golden hour, movimento, close-ups",
+                "description": "📍 Market\n🎙 Áudio: Aula completa com voz\n🎞 PHOTOS + VIDEO\n➜ Alimenta: 45s — Full retreat recap · Luuk reels",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "86bbf131-0ab2-42ec-8632-be198171e132",
+                "title": "☐ Mic ligado & voz gravada",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "b6283b72-677e-4a90-b5ba-6719f869eff2",
+            "title": "Drinks & Social",
+            "start": "20:00",
+            "end": "20:30",
+            "scenes": [
+              {
+                "id": "7744987c-83a1-4221-8027-5a9668b209b7",
+                "title": "Captar: Brindes, conversa, set-up das mesas",
+                "description": "📍 North\n🎙 Áudio: Snippets\n🎞 PHOTOS + VIDEO\n🎬 Direção: Regras de refeição: nada de pessoas a comer/engolir — só ambiente, set-up e beauty shots premium da comida.\n➜ Alimenta: 45s — Full retreat recap",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "d35272e7-57ca-4a1a-b8fa-c3b649c0a584",
+            "title": "Dinner",
+            "start": "20:30",
+            "end": "22:00",
+            "scenes": [
+              {
+                "id": "b16e5eee-61bc-4655-bf70-8f0eb28be842",
+                "title": "Captar: Ambiente, set-up, beauty shots da comida. Primeiros 30 min, depois wrap",
+                "description": "📍 North\n🎙 Áudio: Snippets\n🎞 PHOTOS + VIDEO\n🎬 Direção: Regras de refeição: nada de pessoas a comer/engolir — só ambiente, set-up e beauty shots premium da comida.\n➜ Alimenta: 45s — Full retreat recap",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "35d1a82d-9c84-4e99-b849-9f31bec221c8",
+        "label": "Sáb 3 · Retreat dia 3 (Marques off até 19:00)",
+        "date": "2026-10-03",
+        "start": "19:00",
+        "end": "23:59",
+        "locationId": "985ee427-115f-489e-8f62-d308c223b121",
+        "notes": "08:00–18:30 Marques NÃO trabalha. Sanctum Hike de dia: drone pelo Arno (não coberto pelo Marques).",
+        "blocks": [
+          {
+            "id": "43cb75d6-f54c-4470-b9f0-6da7ad9f7a17",
+            "title": "Sanctum Hike (Arno · drone)",
+            "start": "08:00",
+            "end": "18:30",
+            "scenes": [
+              {
+                "id": "3890893e-72f8-43c9-b9f9-d4deef8685d3",
+                "title": "PREP · Carolina: briefar o Arno e pedir-lhe para partilhar o footage com o Marques",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "e5f9cf69-3892-4ee4-884a-e52da2aa2a37",
+                "title": "Captar: Drone footage do hike captado pelo Arno",
+                "description": "📍 —\n🎙 Áudio: —\n🎞 VIDEO\n🎬 Direção: Marques off\n➜ Alimenta: 45s — Full retreat recap",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "f3c42713-1a0a-4a3a-a036-c1cd603c5517",
+                "title": "☐ Footage do Arno recebido",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "a4f68100-0d18-4ba0-b155-36ca85488a6b",
+            "title": "Fire Ceremony Celebration",
+            "start": "19:00",
+            "end": "19:30",
+            "scenes": [
+              {
+                "id": "ffc2e1ce-2af5-442d-8a97-a67fa7998bc7",
+                "title": "Captar: Chamas, céu ao entardecer, caras iluminadas pelo fogo",
+                "description": "📍 Market Lobby\n🎙 Áudio: Cerimónia com voz do Laor\n🎞 PHOTOS + VIDEO\n➜ Alimenta: 45s — Full retreat recap",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "1a670391-eae9-412c-b385-f15c12564ed1",
+                "title": "☐ Luz de noite / flash pronto",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "1b541a42-92bc-4baa-b39a-2837bdcd9cf8",
+                "title": "☐ Mic ligado & voz gravada",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "8297c17c-2fa1-467a-a9b1-aa82ef3e4787",
+            "title": "Moonlight in Ibiza — themed dinner",
+            "start": "20:00",
+            "end": "21:55",
+            "scenes": [
+              {
+                "id": "6daaf773-df8e-4fd4-8046-39966b455820",
+                "title": "Captar: Outfits prata / branco / azul-gelo, mesa à luz de velas, comunidade, set-up, dança",
+                "description": "📍 Orchard\n🎙 Áudio: Snippets\n🎞 PHOTOS + VIDEO\n🎬 Direção: Regras de refeição: nada de pessoas a comer/engolir — só ambiente, set-up e beauty shots premium da comida. Captar toda a vibe do jantar.\n➜ Alimenta: 45s — Full retreat recap",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "25f69c0c-b4b8-49be-89aa-d9d528a7c328",
+            "title": "DJ set — Panax (afterparty)",
+            "start": "22:00",
+            "end": "23:59",
+            "scenes": [
+              {
+                "id": "6d5cd93f-32b1-464f-a397-b329e273b11a",
+                "title": "PREP · Carolina: confirmar hora do set & local",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "20a4a50a-ca3c-408d-9295-9d5fd5d0ffb7",
+                "title": "Captar: Energia noturna: DJ Panax em ação, guests a dançar, after-party curta de 2 h",
+                "description": "📍 Orchard (TBC)\n🎙 Áudio: Snippets\n🎞 PHOTOS + VIDEO\n🎬 Direção: Usar a tube light para iluminar pessoas à noite\n➜ Alimenta: 45s — Full retreat recap",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "f966a6d7-8291-41d3-a68e-d841ceb8b55b",
+        "label": "Dom 4 · Retreat dia 4",
+        "date": "2026-10-04",
+        "start": "08:00",
+        "end": "11:00",
+        "locationId": "e33b7aa0-9b5b-4010-8e31-0f5caadebe36",
+        "notes": "Staged B-roll + testemunhos.",
+        "blocks": [
+          {
+            "id": "94eed287-67b5-44a5-972e-2bf4b66a452a",
+            "title": "Staged B-roll 1: Sea jump from the rocks",
+            "start": "08:00",
+            "end": "08:30",
+            "scenes": [
+              {
+                "id": "af3d78a1-00fa-44e9-b83c-f9787ce89f14",
+                "title": "PREP · Carolina + Jessica: recrutar amigos da Sanctum",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "64294d0d-9832-4232-9811-88011364d726",
+                "title": "Captar: Grupo de ~4 a saltar ao mar de forma alegre e catártica (ex.: Charlotte, Jessica, Luuk, Alex). Drone: aéreo das rochas",
+                "description": "📍 Rocks / bay\n🎙 Áudio: —\n🎞 PHOTOS + VIDEO + DRONE\n🎬 Direção: Drone — rápido\n➜ Alimenta: 45s — Full retreat recap · Luuk reels",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "f87a9349-22e3-4d0c-a6f5-a8a19fa0a735",
+                "title": "☐ Participantes confirmados",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "dcbf4597-d330-4ba0-a802-c94e2acfe514",
+                "title": "☐ Drone shots",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "996bb9ea-6e5c-431d-8911-925e50da6222",
+            "title": "Staged B-roll 2: Infinity pool swim",
+            "start": "08:30",
+            "end": "09:00",
+            "scenes": [
+              {
+                "id": "2559516e-6799-41d6-be14-c64b02af5a86",
+                "title": "PREP · Carolina + Jessica: recrutar participantes",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "e9c800a5-8b71-459a-a663-4a3323368daa",
+                "title": "Captar: 2–3 pessoas a nadar (ex.: Luuk a saltar de manhã, com Gab ou Carolina). Drone: aéreo da piscina",
+                "description": "📍 Infinity pool\n🎙 Áudio: —\n🎞 PHOTOS + VIDEO + DRONE\n🎬 Direção: Drone — rápido\n➜ Alimenta: 45s — Full retreat recap · Luuk reels",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "cf1e4088-53cf-4264-9a20-cbc0a3f8dad4",
+                "title": "☐ Participantes confirmados",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "041f7230-1c44-4bae-9643-cf137ce00ecb",
+                "title": "☐ Drone shots",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "0ff67fb6-a27c-4065-bf98-0167bf2c57ac",
+            "title": "Staged B-roll 3: Steam sauna",
+            "start": "09:30",
+            "end": "10:00",
+            "scenes": [
+              {
+                "id": "a5bdc1a9-748c-49a8-b378-93533ef2380c",
+                "title": "PREP · Carolina + Jessica: recrutar participantes (nomes TBC)",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "936a0e41-b077-4bff-baeb-3b718db6b806",
+                "title": "Captar: 2–3 pessoas a entrar na sauna, a suar, ritual de sauna",
+                "description": "📍 Steam sauna\n🎙 Áudio: —\n🎞 PHOTOS + VIDEO\n➜ Alimenta: 45s — Full retreat recap",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              },
+              {
+                "id": "6ff11169-7006-4466-b128-010ccf5bb1f7",
+                "title": "☐ Participantes confirmados (só quem está à vontade a ser filmado)",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "a3c9f465-5eca-44da-aa3f-c5050a9d7989"
+              }
+            ]
+          },
+          {
+            "id": "3bdb3add-9e5d-4c13-84b8-89f1d7f0ae17",
+            "title": "Testimonials",
+            "start": "10:00",
+            "end": "11:00",
+            "scenes": [
+              {
+                "id": "f1b72d76-9f32-4579-b183-1fedc1218363",
+                "title": "PREP · Carolina (com Gab): pré-selecionar e convidar 5 pessoas num dos jantares (ex.: Charlotte)",
+                "description": "Confirmar antes do bloco começar.",
+                "links": [],
+                "done": false
+              },
+              {
+                "id": "269808f7-b4c1-4356-9c03-4b6dfe8028fe",
+                "title": "Captar: 5 participantes pré-acordados a partilhar o que o retreat significou",
+                "description": "📍 TBC\n🎙 Áudio: Testemunhos completos com voz\n🎞 VIDEO\n🎬 Direção: Os 5 confirmados ANTES de domingo\n➜ Alimenta: Testimonials",
+                "links": [],
+                "done": false,
+                "reelId": "048a37bf-7e6c-460b-bd3b-a66d2c70f9b8"
+              },
+              {
+                "id": "f183b7ed-e61e-4f52-ba52-963567edf668",
+                "title": "☐ Testemunho 1",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "048a37bf-7e6c-460b-bd3b-a66d2c70f9b8"
+              },
+              {
+                "id": "a0571c32-04fe-4084-bb7d-0b465e9ad15a",
+                "title": "☐ Testemunho 2",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "048a37bf-7e6c-460b-bd3b-a66d2c70f9b8"
+              },
+              {
+                "id": "84396659-a96d-4de4-98fe-91f0d222769e",
+                "title": "☐ Testemunho 3",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "048a37bf-7e6c-460b-bd3b-a66d2c70f9b8"
+              },
+              {
+                "id": "e9d9ba34-4847-499c-adcb-05a43bf2f579",
+                "title": "☐ Testemunho 4",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "048a37bf-7e6c-460b-bd3b-a66d2c70f9b8"
+              },
+              {
+                "id": "cd5c1e5b-39ee-4805-8533-36cfbb314d35",
+                "title": "☐ Testemunho 5",
+                "description": "",
+                "links": [],
+                "done": false,
+                "reelId": "048a37bf-7e6c-460b-bd3b-a66d2c70f9b8"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

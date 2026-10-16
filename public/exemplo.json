@@ -1,0 +1,184 @@
+{
+  "format": "preprod/v1",
+  "title": "Café Atelier — Outubro",
+  "data": {
+    "client": "Café Atelier",
+    "description": "Série de 4 reels sobre o ritual do café: da torra à chávena. Tom calmo, luz natural, planos próximos e som ambiente.",
+    "shootDate": "2026-10-15",
+    "definitions": [
+      {
+        "label": "Formato",
+        "value": "9:16 · 4K 25fps"
+      },
+      {
+        "label": "Look",
+        "value": "Tons quentes, contraste suave, grão leve"
+      },
+      {
+        "label": "Equipamento",
+        "value": "FX3 · 35mm f1.4 · 90mm macro · gimbal"
+      },
+      {
+        "label": "Equipa",
+        "value": "Daniel (DOP), Ana (direção), barista do cliente"
+      }
+    ],
+    "reels": [
+      {
+        "title": "Reel 01 — A torra",
+        "concept": "Gancho: som do grão a estalar. Macro da torra → mãos → sorriso.",
+        "expiresAt": "2026-10-25",
+        "status": "aprovado",
+        "id": "reel1"
+      },
+      {
+        "title": "Reel 02 — Latte art",
+        "concept": "Timelapse + slow motion do leite. Texto: 'Paciência em 30 segundos'.",
+        "expiresAt": "2026-11-01",
+        "status": "aprovado",
+        "id": "reel2"
+      },
+      {
+        "title": "Reel 03 — Bastidores",
+        "concept": "Um dia na vida do barista, cortes rápidos a cada 1s.",
+        "expiresAt": "2026-11-10",
+        "status": "ideia",
+        "id": "reel3"
+      },
+      {
+        "title": "Reel 04 — Cliente",
+        "concept": "Depoimento curto de cliente habitual, plano fixo.",
+        "expiresAt": "2026-10-05",
+        "status": "ideia",
+        "id": "reel4"
+      }
+    ],
+    "locations": [
+      {
+        "id": "loc1",
+        "name": "Café Atelier — Loja",
+        "address": "Rua das Flores 12, Lisboa",
+        "mapsUrl": "https://maps.google.com/?q=Rua+das+Flores+12+Lisboa",
+        "notes": "Luz de janela até 11h. Chegar pela porta lateral."
+      }
+    ],
+    "sessions": [
+      {
+        "label": "Manhã",
+        "date": "2026-10-15",
+        "start": "08:00",
+        "end": "12:00",
+        "locationId": "loc1",
+        "notes": "Loja abre às 9h — planos vazios antes disso.",
+        "blocks": [
+          {
+            "title": "Espaço vazio",
+            "start": "08:00",
+            "end": "09:00",
+            "scenes": [
+              {
+                "title": "Plano aberto da loja com luz de janela",
+                "description": "Tripé, 35mm, luz a entrar pela esquerda.",
+                "imageUrl": "https://picsum.photos/id/42/400/500?grayscale",
+                "links": [],
+                "reelId": "reel3"
+              },
+              {
+                "title": "Detalhes: chávenas empilhadas",
+                "description": "Macro, deslizar lateral.",
+                "imageUrl": "https://picsum.photos/id/30/400/500?grayscale",
+                "links": [
+                  {
+                    "label": "Moodboard",
+                    "url": "https://pinterest.com"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Torra",
+            "start": "09:00",
+            "end": "10:30",
+            "scenes": [
+              {
+                "title": "Grão a cair no torrador",
+                "description": "Slow motion 100fps, 90mm.",
+                "videoUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                "links": [],
+                "reelId": "reel1"
+              },
+              {
+                "title": "Mãos do barista a cheirar o grão",
+                "description": "Close, foco nas mãos.",
+                "imageUrl": "https://picsum.photos/id/225/400/500?grayscale",
+                "links": [],
+                "reelId": "reel1"
+              }
+            ]
+          },
+          {
+            "title": "Latte art",
+            "start": "10:30",
+            "end": "12:00",
+            "scenes": [
+              {
+                "title": "Top shot do coração no leite",
+                "description": "Gimbal por cima, 50fps.",
+                "links": [
+                  {
+                    "label": "Referência IG",
+                    "url": "https://instagram.com"
+                  }
+                ],
+                "reelId": "reel2"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "label": "Tarde",
+        "date": "2026-10-15",
+        "start": "14:00",
+        "end": "17:00",
+        "locationId": "loc1",
+        "notes": "",
+        "blocks": [
+          {
+            "title": "Depoimento",
+            "start": "14:00",
+            "end": "15:00",
+            "scenes": [
+              {
+                "title": "Entrevista cliente habitual — plano fixo",
+                "description": "2 câmaras, lapela.",
+                "links": [],
+                "reelId": "reel4"
+              }
+            ]
+          },
+          {
+            "title": "B-roll bastidores",
+            "start": "15:00",
+            "end": "17:00",
+            "scenes": [
+              {
+                "title": "Barista a limpar a máquina",
+                "description": "",
+                "links": [],
+                "reelId": "reel3"
+              },
+              {
+                "title": "Clientes a entrar (de costas)",
+                "description": "Sem rostos sem autorização.",
+                "links": [],
+                "reelId": "reel3"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

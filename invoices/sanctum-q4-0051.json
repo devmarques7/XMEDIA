@@ -1,0 +1,31 @@
+{
+  "number": "Q4 - #0051",
+  "issue_date": "2026-10-12",
+  "currency": "EUR",
+  "btw": "auto",
+  "client": {
+    "name": "Sanctum BV — Attn. Carolina Oconitrillo",
+    "address": "Singel 174\n1015 AJ Amsterdam\nNetherlands",
+    "country": "NL",
+    "vat": "",
+    "email": "carolina@wearesanctum.com"
+  },
+  "items": [
+    {
+      "description": "® [MM] Capturing Day — Het Sieraad",
+      "qty": 3,
+      "rate": 114
+    },
+    {
+      "description": "® [MM] Post-Production / Reel PRO: - Complete Edit",
+      "qty": 1,
+      "rate": 245
+    },
+    {
+      "description": "® [MM] Partnership Discount — Venue Launch",
+      "qty": 1,
+      "rate": -287
+    }
+  ],
+  "note": "Venue launch reel “SANCTUM x HET SIERAAD — Every Wednesday — Amsterdam” (1 Reel, up to 40 s), filmed on location at Het Sieraad, Postjesweg 1, Amsterdam. Includes the revision rounds requested (people-focused edit, new music, location shots, B&W daylight grade and text overlays). A partnership discount of €287.00 has been applied so the total matches the agreed budget of €300.00 excl. BTW. This invoice replaces invoice Q4 - #0050, which is cancelled and should be disregarded."
+}
