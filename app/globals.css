@@ -3601,3 +3601,10 @@ button.fin-tile:hover, button.fin-tile[aria-pressed="true"] { border-color: var(
 .av-group-i:hover { transform: translateY(-2px); z-index: 1; }
 .av-group-i:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 tr.is-pinned td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
+
+/* Informações → atalhos e comandos */
+.kbd-list { display: grid; gap: 6px; margin: 0; }
+.kbd-list div { display: grid; grid-template-columns: minmax(150px, 260px) minmax(0, 1fr); gap: 12px; align-items: center; padding: 6px 0; border-top: 1px solid var(--line); }
+.kbd-list dd { margin: 0; font-size: 14px; }
+kbd { display: inline-block; padding: 3px 8px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; background: var(--panel-2); font-family: var(--mono); font-size: 11.5px; white-space: nowrap; }
+@media (max-width: 640px) { .kbd-list div { grid-template-columns: 1fr; gap: 4px; } }
