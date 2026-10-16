@@ -1,5 +1,7 @@
 "use client";
 
+import { InviteBadge, InvitesView } from "@/components/team/InvitesView";
+import { inviteState, needsInviteAction } from "@/lib/inviteState";
 import { TeamInviteDialog } from "@/components/team/TeamInviteDialog";
 import { TeamWorkload } from "@/components/team/Workload";
 import { Avatar } from "@/components/team/Avatar";
@@ -52,6 +54,7 @@ export default function TeamPage() {
   const [projects, setProjects] = useState<string[]>([]);
   const panelRef = useRef<HTMLDivElement>(null);
   const [inviting, setInviting] = useState(false);
+  const [listView, setListView] = useState<"members" | "invites">("members"); // Membros | Convites
 
   useEffect(() => {
     try {
@@ -188,10 +191,14 @@ export default function TeamPage() {
         {isAdmin && (
           <section className="w">
             <div className="w-head" style={{ flexWrap: "wrap", gap: 10 }}>
-              <span className="label">
-                <b>{pad(members.length)}</b>
-                {t("tm.members")}
-              </span>
+              <div className="seg" role="tablist" aria-label={t("tm.members")}>
+                <button role="tab" aria-selected={listView === "members"} aria-pressed={listView === "members"} onClick={() => setListView("members")} data-testid="team-tab-members">
+                  {t("tm.members")} <span className="muted">{members.length}</span>
+                </button>
+                <button role="tab" aria-selected={listView === "invites"} aria-pressed={listView === "invites"} onClick={() => setListView("invites")} data-testid="team-tab-invites">
+                  {t("tinv.tab")} {members.some((m) => needsInviteAction(inviteState(m))) && <span className="tinv-dot">{members.filter((m) => needsInviteAction(inviteState(m))).length}</span>}
+                </button>
+              </div>
               <div className="row" style={{ gap: 8, flexWrap: "nowrap" }}>
                 {entries.length > 0 && (
                   <button className="btn ghost small" onClick={exportCsv}>
@@ -207,12 +214,15 @@ export default function TeamPage() {
               </div>
             </div>
             {members.length === 0 && <p className="muted">{t("tm.empty")}</p>}
-            <div className="memberlist">
+            {listView === "invites" && members.length > 0 && <InvitesView members={members} onOpen={(id) => open(id)} onChanged={() => load()} onToast={setToast} />}
+            <div className="memberlist" hidden={listView !== "members"}>
               {rows.map(({ m, s, inCur, close }) => (
                 <button key={m.id} className={`memberrow ${selected === m.id ? "sel" : ""} ${m.active ? "" : "off"}`} onClick={() => open(m.id)}>
                   <Avatar name={m.name} photo={m.photo_url} size={36} />
                   <span className="mr-main">
-                    <span className="mr-name">{m.name}</span>
+                    <span className="mr-name">
+                      {m.name} {inviteState(m) !== "active" && <InviteBadge m={m} />}
+                    </span>
                     <span className="muted small">
                       {m.role || "—"} · {fmtMoney(m.rate, m.rate_currency, locale)}
                       {t("tm.perHour")}
@@ -293,7 +303,7 @@ function MemberPanel({
               {m.name}
             </h2>
             <span className="label muted">
-              {m.role || "—"} · <StatusChip status={m.status} />
+              {m.role || "—"} · <InviteBadge m={m} />
             </span>
           </div>
         </div>
@@ -757,12 +767,6 @@ function CloseTab({
   );
 }
 
-function StatusChip({ status }: { status: Member["status"] }) {
-  const { t } = useT();
-  const tone = status === "active" ? "tone-ok" : status === "invited" ? "tone-warn" : status === "disabled" ? "tone-danger" : "muted";
-  return <span className={tone}>● {t(`inv.status.${status ?? "draft"}` as "inv.status.draft")}</span>;
-}
-
 /** Convite por email + link para partilhar; mostra o estado do registo e do código. */
 function InviteTab({ member, onToast, onChanged }: { member: Member; onToast: (m: string) => void; onChanged: () => Promise<void> }) {
   const { t, locale } = useT();
@@ -798,7 +802,7 @@ function InviteTab({ member, onToast, onChanged }: { member: Member; onToast: (m
         <div>
           <div className="label muted">{t("inv.title")}</div>
           <div style={{ marginTop: 6 }}>
-            <StatusChip status={member.status} />
+            <InviteBadge m={member} />
           </div>
         </div>
         <div className="muted small" style={{ textAlign: "right" }}>
@@ -808,7 +812,9 @@ function InviteTab({ member, onToast, onChanged }: { member: Member; onToast: (m
               {t("inv.code")} <span className="mono">{member.code_hint}</span>
             </div>
           )}
-          {member.last_login_at && <div>{t("inv.lastLogin", { date: fmt(member.last_login_at) })}</div>}
+          {member.invited_at && <div>{t("tinv.d.invited")}: {fmt(member.invited_at)}</div>}
+          {member.registered_at && <div>{t("tinv.d.registered")}: {fmt(member.registered_at)}</div>}
+          {member.last_login_at ? <div>{t("inv.lastLogin", { date: fmt(member.last_login_at) })}</div> : member.registered_at ? <div className="tone-warn">{t("tinv.noLoginYet")}</div> : null}
         </div>
       </div>
 
