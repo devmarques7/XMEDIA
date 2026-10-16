@@ -447,7 +447,20 @@ function CustomerPage() {
 
       {tab === "grid" && (
         <section className="w">
-          <GridPreview customer={c} posts={posts} onOpen={setEditing} />
+          <GridPreview
+            customer={c}
+            posts={posts}
+            onOpen={setEditing}
+            onCover={async (p, f) => {
+              try {
+                const m = await uploadMedia(f, `customers/${c.id}`);
+                await savePost({ ...p, cover: m.src });
+                setToast(t("gr.coverSaved"));
+              } catch (e) {
+                setToast((e as Error).message);
+              }
+            }}
+          />
         </section>
       )}
 

@@ -153,6 +153,10 @@ export const ptC = {
 
   "gr.hint": "Como o perfil vai ficar: os conteúdos planeados aparecem no topo, com a capa escolhida.",
   "gr.planned": "Planeado",
+  "gr.open": "Abrir conteúdo",
+  "gr.changeCover": "Alterar capa",
+  "gr.viewIg": "Ver no Instagram",
+  "gr.coverSaved": "Capa atualizada.",
   "gr.posts": "publicações",
   "gr.followers": "seguidores",
   "gr.following": "a seguir",
@@ -576,6 +580,10 @@ export const enC: C = {
 
   "gr.hint": "How the profile will look: planned content appears at the top, with its chosen cover.",
   "gr.planned": "Planned",
+  "gr.open": "Open content",
+  "gr.changeCover": "Change cover",
+  "gr.viewIg": "View on Instagram",
+  "gr.coverSaved": "Cover updated.",
   "gr.posts": "posts",
   "gr.followers": "followers",
   "gr.following": "following",
@@ -997,6 +1005,10 @@ export const nlC: C = {
 
   "gr.hint": "Zo komt het profiel eruit te zien: geplande content staat bovenaan, met de gekozen cover.",
   "gr.planned": "Gepland",
+  "gr.open": "Content openen",
+  "gr.changeCover": "Cover wijzigen",
+  "gr.viewIg": "Bekijk op Instagram",
+  "gr.coverSaved": "Cover bijgewerkt.",
   "gr.posts": "berichten",
   "gr.followers": "volgers",
   "gr.following": "volgend",

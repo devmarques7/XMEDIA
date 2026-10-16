@@ -1124,15 +1124,24 @@ kbd { font-family: var(--mono); font-size: 10.5px; padding: 2px 6px; border-radi
 .igp-counts b { display: block; font-size: 17px; font-weight: 600; }
 .igp-name { margin: 12px 0 4px; }
 .igp-name p { margin: 4px 0 0; white-space: pre-line; }
+/* grid como no perfil do Instagram: 3 colunas, retrato 3:4, 2px entre fotos, sem bordas; ao passar o rato, camada escura com ações */
 .igp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 12px; }
-.igp-cell { position: relative; aspect-ratio: 3/4; overflow: hidden; border: 0; padding: 0; background: var(--panel-2); cursor: pointer; }
-.igp-cell.pad { cursor: default; background: transparent; }
-.igp-cell img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .2s ease; }
-.igp-cell:hover img { transform: scale(1.03); }
-.igp-cell.planned::after { content: ""; position: absolute; inset: 0; border: 2px dashed var(--accent); pointer-events: none; }
-.igp-icon { position: absolute; top: 6px; right: 6px; color: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)); display: flex; }
-.igp-badge { position: absolute; left: 6px; bottom: 6px; display: inline-flex; align-items: center; gap: 4px; padding: 3px 7px; border-radius: 999px;
-  background: var(--accent); color: var(--accent-ink); font: 600 10px/1 var(--mono); }
+.igp-cell { position: relative; aspect-ratio: 3/4; overflow: hidden; background: var(--panel-2); }
+.igp-cell.pad { background: transparent; }
+.igp-hit { display: block; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: pointer; }
+.igp-hit img, .igp-hit .cv-empty { width: 100%; height: 100%; object-fit: cover; display: block; }
+.igp-icon { position: absolute; top: 8px; right: 8px; color: #fff; filter: drop-shadow(0 1px 2px rgba(0,0,0,.7)); display: flex; pointer-events: none; }
+.igp-badge { position: absolute; left: 8px; bottom: 8px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; border-radius: 999px; pointer-events: none;
+  background: rgba(0, 0, 0, .55); color: #fff; font: 500 10px/1 var(--mono); letter-spacing: .04em; backdrop-filter: blur(6px); }
+.igp-over { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: rgba(0, 0, 0, .45);
+  opacity: 0; pointer-events: none; transition: opacity .18s ease; }
+.igp-cell:hover .igp-over, .igp-cell:focus-within .igp-over, .igp-cell.busy .igp-over { opacity: 1; pointer-events: auto; }
+.igp-cell:hover .igp-badge, .igp-cell:focus-within .igp-badge { opacity: 0; }
+.igp-act { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid rgba(255, 255, 255, .7); border-radius: 999px; background: rgba(0, 0, 0, .25); color: #fff; font-family: inherit; font-size: 12px; font-weight: 500; line-height: 1; cursor: pointer; white-space: nowrap; }
+.igp-act:hover { background: #fff; color: #0b0b0b; }
+.igp-act:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+/* ecrãs tácteis (sem hover): tocar abre o conteúdo; as ações ficam num canto */
+@media (hover: none) { .igp-over { opacity: 1; pointer-events: none; background: none; justify-content: flex-end; align-items: flex-end; padding: 6px; } .igp-over .igp-act[data-testid="igp-open"] { display: none; } .igp-over .igp-act { pointer-events: auto; padding: 6px 9px; font-size: 11px; } }
 
 /* métricas */
 .mt-spark { width: 100%; height: 80px; margin-top: 12px; color: var(--accent); }
