@@ -4,6 +4,7 @@
 // com hora, barra de cor e estado), ajustado ao separador (hoje / amanhã = 1 dia, semana = 7 dias), a linha do
 // tempo de prazos (14 dias) e as tarefas sem data. Tudo colapsável (fechado no telemóvel).
 import Link from "next/link";
+import { useState } from "react";
 import { Collapsible } from "@/components/Collapsible";
 import { Icon } from "@/components/Icon";
 import { useT, type Key } from "@/lib/i18n";
@@ -13,9 +14,12 @@ import type { ContentPost, ProcessSettings } from "@/lib/customer";
 
 const addDays = (d: string, n: number) => ymd(new Date(new Date(d + "T12:00:00").getTime() + n * 86_400_000));
 
+const PER = 3;
+
 export function TodayCalendar({ view, tasks, posts, proc, onToggle, onDate }: { view: "today" | "tomorrow" | "week" | "none" | "done"; tasks: StudioTask[]; posts: ContentPost[]; proc: ProcessSettings; onToggle: (t: StudioTask) => void; onDate: (t: StudioTask, due: string) => void }) {
   const { t, locale } = useT();
   const today = ymd(new Date());
+  const [page, setPage] = useState<Record<string, number>>({}); // página de cada dia (3 itens de cada vez)
   const days = view === "today" ? [today] : view === "tomorrow" ? [addDays(today, 1)] : weekDays(weekOf());
   const cal = agenda(days, tasks, posts, proc);
   const line = agenda(Array.from({ length: 14 }, (_, i) => addDays(today, i)), tasks.filter((x) => !x.done), posts, proc);
@@ -40,44 +44,77 @@ export function TodayCalendar({ view, tasks, posts, proc, onToggle, onDate }: { 
           </span>
         </div>
         {cal.map((d) => {
-          const n = d.tasks.length + d.deadlines.length + d.publishing.length;
+          // todos os itens do dia; mostram-se no máximo PER de cada vez (‹ ›)
+          const items: { key: string; node: React.ReactNode }[] = [
+            ...d.tasks.map((x) => ({
+              key: x.id,
+              node: (
+                <button key={x.id} className={`tc-card k-task ${x.done ? "done" : ""}`} onClick={() => onToggle(x)} data-testid="tc-task">
+                  <span className="tc-ic">{x.done ? <Icon name="check" size={13} /> : <Icon name="task" size={13} />}</span>
+                  <span className="tc-body">
+                    <span className="tc-type">{t("tc.tasks")}</span>
+                    <b className="tc-name">{x.title}</b>
+                  </span>
+                </button>
+              ),
+            })),
+            ...d.deadlines.map((p) => ({
+              key: `dl-${p.id}`,
+              node: (
+                <Link key={p.id} className="tc-card k-dl" href={`/clientes/${p.customer_id}?tab=content&post=${p.id}`}>
+                  <span className="tc-ic">
+                    <Icon name="flag" size={13} />
+                  </span>
+                  <span className="tc-body">
+                    <span className="tc-type">{t("tc.deadlines")}</span>
+                    <b className="tc-name">{p.title || t(`ct.type.${p.type}` as Key)}</b>
+                  </span>
+                </Link>
+              ),
+            })),
+            ...d.publishing.map((p) => ({
+              key: `pub-${p.id}`,
+              node: (
+                <Link key={`pub-${p.id}`} className="tc-card k-pub" href={`/clientes/${p.customer_id}?tab=content&post=${p.id}`}>
+                  <span className="tc-ic mono">{time(p.scheduled_at)}</span>
+                  <span className="tc-body">
+                    <span className="tc-type">{t("tc.publishing")}</span>
+                    <b className="tc-name">{p.title || t(`ct.type.${p.type}` as Key)}</b>
+                  </span>
+                </Link>
+              ),
+            })),
+          ];
+          const pages = Math.max(1, Math.ceil(items.length / PER));
+          const pg = Math.min(page[d.day] ?? 0, pages - 1);
+          const go = (n: number) => setPage((m) => ({ ...m, [d.day]: (n + pages) % pages }));
           return (
-            <article key={d.day} className={`agc-day tc-day ${d.day === today ? "is-today" : ""}`}>
-              <div className="agc-num">
+            <article key={d.day} className={`tc-day ${d.day === today ? "is-today" : ""}`} data-testid="tc-day">
+              <div className="tc-num">
                 <span>{fmt(d.day, { day: "2-digit" })}</span>
                 <small>{fmt(d.day, { weekday: "short" })}</small>
               </div>
-              <div className="agc-cards">
-                {d.tasks.map((x) => (
-                  <button key={x.id} className={`agc-card tc-card k-task ${x.done ? "done" : ""}`} onClick={() => onToggle(x)} data-testid="tc-task">
-                    <span className="agc-time mono">{x.done ? <Icon name="check" size={13} /> : <Icon name="task" size={13} />}</span>
-                    <span className="agc-body">
-                      <span className="agc-type">{t("tc.tasks")}</span>
-                      <b className="agc-name">{x.title}</b>
+              <div className="tc-cards">
+                {items.slice(pg * PER, pg * PER + PER).map((x) => x.node)}
+                {!items.length && <span className="muted small tc-free">{t("tc.free")}</span>}
+                {pages > 1 && (
+                  <div className="tc-pager" data-testid="tc-pager">
+                    <button className="iconbtn" onClick={() => go(pg - 1)} aria-label={t("cal.prev")}>
+                      <Icon name="back" size={14} />
+                    </button>
+                    <span className="mono small muted">
+                      {pg * PER + 1}–{Math.min(items.length, pg * PER + PER)} / {items.length}
                     </span>
-                  </button>
-                ))}
-                {d.deadlines.map((p) => (
-                  <Link key={p.id} className="agc-card tc-card k-dl" href={`/clientes/${p.customer_id}?tab=content&post=${p.id}`}>
-                    <span className="agc-time mono">
-                      <Icon name="flag" size={13} />
+                    <span className="tc-dots" aria-hidden>
+                      {Array.from({ length: pages }, (_, i) => (
+                        <i key={i} className={i === pg ? "on" : ""} />
+                      ))}
                     </span>
-                    <span className="agc-body">
-                      <span className="agc-type">{t("tc.deadlines")}</span>
-                      <b className="agc-name">{p.title || t(`ct.type.${p.type}` as Key)}</b>
-                    </span>
-                  </Link>
-                ))}
-                {d.publishing.map((p) => (
-                  <Link key={`pub-${p.id}`} className="agc-card tc-card k-pub" href={`/clientes/${p.customer_id}?tab=content&post=${p.id}`}>
-                    <span className="agc-time mono">{time(p.scheduled_at)}</span>
-                    <span className="agc-body">
-                      <span className="agc-type">{t("tc.publishing")}</span>
-                      <b className="agc-name">{p.title || t(`ct.type.${p.type}` as Key)}</b>
-                    </span>
-                  </Link>
-                ))}
-                {!n && <span className="muted small tc-free">{t("tc.free")}</span>}
+                    <button className="iconbtn" onClick={() => go(pg + 1)} aria-label={t("cal.next")}>
+                      <Icon name="next" size={14} />
+                    </button>
+                  </div>
+                )}
               </div>
             </article>
           );

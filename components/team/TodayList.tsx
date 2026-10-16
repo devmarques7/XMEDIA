@@ -12,6 +12,7 @@ import { newTask } from "@/lib/tasks";
 import { taskOwner, weekDays, weekOf, ymd, type StudioTask } from "@/lib/studio";
 import { COMPANY, autoPlan, byRank, dueTag, reorder, type PlanRange, isInternal, mine, mineOrOpen, suggestions, todayTasks, type Bucket, type TodayTask } from "@/lib/today";
 import { Avatar } from "./Avatar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/Tooltip";
 import { TypeIcon } from "@/components/customer/parts";
 import { AssigneePicker } from "./Assignees";
 import { TodayCalendar } from "./TodayCalendar";
@@ -44,26 +45,26 @@ export function useTodayFilter(): [Filter, (f: Filter) => void] {
   ];
 }
 
-/** Avatar no canto superior direito da página Hoje: alterna entre "as minhas (+ sem responsável)" e "de todos". */
+/** Avatar no canto superior direito da página Hoje: alterna entre "as minhas (+ sem responsável)" e "de todos". Só o
+ * avatar (realçado quando o foco está ligado); a explicação aparece numa tooltip ao passar o rato. */
 export function FocusToggle({ S, filter, onFilter }: { S: S; filter: Filter; onFilter: (f: Filter) => void }) {
   const { t } = useT();
   const me = S.people.find((p) => p.email === S.me);
   const focused = filter === "mine";
   const open = S.tasks.filter((x) => !x.deleted && !x.done && mineOrOpen(x, S.me)).length;
   return (
-    <button
-      className={`td-focus ${focused ? "on" : ""}`}
-      onClick={() => onFilter(focused ? "all" : "mine")}
-      aria-pressed={focused}
-      title={focused ? t("td.focusOn") : t("td.focusOff")}
-      data-testid="td-focus"
-    >
-      <Avatar name={me?.name || S.me || "?"} photo={me?.photo} size={30} ring={focused} />
-      <span className="td-focus-l">
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button className={`td-focus ${focused ? "on" : ""}`} onClick={() => onFilter(focused ? "all" : "mine")} aria-pressed={focused} aria-label={focused ? t("td.focusOn") : t("td.focusOff")} data-testid="td-focus">
+          <Avatar name={me?.name || S.me || "?"} photo={me?.photo} size={34} />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" align="end" data-testid="td-focus-tip">
         <b>{focused ? t("td.f.mine") : t("td.f.all")}</b>
-        <span className="muted small">{focused ? t("td.focusCount", { n: open }) : t("td.focusAll")}</span>
-      </span>
-    </button>
+        <span className="tt-sub">{focused ? t("td.focusCount", { n: open }) : t("td.focusAll")}</span>
+        <span className="tt-hint">{focused ? t("td.focusClickAll") : t("td.focusClickMine")}</span>
+      </TooltipContent>
+    </Tooltip>
   );
 }
 type When = "today" | "tomorrow" | "week" | "none";
