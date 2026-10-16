@@ -52,3 +52,18 @@ Estrutura do `data`: `client, description, shootDate, definitions[], reels[], lo
   Links: `Rótulo https://… | Outro https://…`. O separador pode ser `,` ou `;` (Excel PT).
 
 Antes de qualquer importação é criada uma versão automaticamente.
+
+## Ambiente local (igual à produção)
+
+Supabase completo no Docker (Postgres + Auth + Storage + Studio) com as mesmas migrações de `supabase/migrations`.
+
+```bash
+colima start          # Docker (uma vez por arranque do Mac)
+npm run db:start      # Supabase local → API :54321 · Studio http://127.0.0.1:54323
+npm run dev           # app em http://localhost:3000 (lê .env.local)
+```
+
+- Login: `contact@mediamarques.com` + código `123456` (definido em `supabase/seed.sql`).
+- Ver os dados: Studio em http://127.0.0.1:54323 (tabelas, Storage → `proposal-media`).
+- `npm run db:reset` apaga tudo e volta a aplicar migrações + seed. `npm run db:stop` para o Supabase.
+- Testes E2E visíveis (Playwright): `npm run e2e` · sem janela: `HEADLESS=1 npm run e2e` · interativo: `npm run e2e:ui`.

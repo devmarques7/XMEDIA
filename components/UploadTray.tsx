@@ -13,6 +13,7 @@ const mb = (b: number) => (b / 1024 / 1024).toFixed(b > 100 * 1024 * 1024 ? 0 : 
 export function uploadErrorText(t: (k: Key, v?: Record<string, string | number>) => string, m: string) {
   if (m === "too_large") return t("up.tooLarge");
   if (m === "too_long_free") return t("up.tooLong");
+  if (m === "optimize_stalled") return t("up.stalled");
   if (/^(mux|r2|s3|storage|upload|tus)_/.test(m)) return t("up.muxFail", { code: m });
   return m;
 }

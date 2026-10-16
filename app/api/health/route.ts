@@ -1,3 +1,5 @@
+import { senderFrom } from "@/lib/inviteEmail";
+import { r2Enabled } from "@/lib/server/r2";
 import { serviceClient } from "@/lib/server/admin";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +11,8 @@ const has = (k: string) => Boolean(process.env[k]?.trim());
  * Estado da configuração (só sim/não, nunca valores) para a página /setup.
  * Verifica variáveis, tabelas do Supabase, bucket de media, Google no Supabase Auth e Instagram.
  */
+const R2_ENV = ["R2_ACCOUNT_ID", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "R2_BUCKET", "R2_PUBLIC_URL"];
+
 export async function GET(req: Request) {
   const origin = new URL(req.url).origin;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -76,9 +80,14 @@ export async function GET(req: Request) {
     sessionSecret: has("MEMBER_SESSION_SECRET"),
     instagram: has("INSTAGRAM_APP_ID") && has("INSTAGRAM_APP_SECRET"),
     resend: has("RESEND_API_KEY"),
+    // INVITE_FROM tal como está na Vercel é aceite pela Resend? (senão a app usa o nome com o endereço por omissão)
+    resendFrom: !process.env.INVITE_FROM?.trim() || senderFrom() === process.env.INVITE_FROM.trim(),
     cron: has("CRON_SECRET") || !!tables.app_cron,
     ai: has("ANTHROPIC_API_KEY"),
     mux: has("MUX_TOKEN_ID") && has("MUX_TOKEN_SECRET"),
+    // as 5 variáveis R2_* (ou S3_*) completas → vídeos vão para o R2 sem otimizar no browser
+    r2: r2Enabled(),
+    r2Missing: R2_ENV.filter((k) => !has(k)),
     vault: has("VAULT_KEY"),
   });
 }

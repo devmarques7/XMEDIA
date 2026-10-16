@@ -4,7 +4,10 @@
 // que o Instagram usa — com o bitrate calculado para caber num tamanho máximo. Usado quando não há armazenamento para
 // ficheiros grandes (Supabase Free: 50 MB por ficheiro). A biblioteca só é carregada quando é precisa.
 
-export type OptimizeResult = { file: File } | { error: "cant_decode" | "too_long" };
+export type OptimizeResult = { file: File } | { error: "cant_decode" | "too_long" | "stalled" };
+
+/** Sem progresso durante este tempo → a conversão encravou (descodificador/codificador do browser parado). */
+const STALL_MS = 45_000;
 
 /** Bitrate de vídeo (bps) para caber em `maxBytes` com áudio a 128 kbps e ~7% de margem; máx. 12 Mbps. */
 export function targetBitrate(maxBytes: number, seconds: number, audio = 128_000) {
@@ -33,8 +36,26 @@ export async function optimizeVideo(file: File, maxBytes: number, onProgress?: (
       audio: { codec: "aac", bitrate: 128_000 },
     });
     if (!conversion.isValid) return { error: "cant_decode" };
-    conversion.onProgress = (p: number) => onProgress?.(p);
-    await conversion.execute();
+    let last = Date.now();
+    conversion.onProgress = (p: number) => {
+      last = Date.now();
+      onProgress?.(p);
+    };
+    // vigia: se o browser deixar de converter, cancela e avisa em vez de ficar parado nos 0% para sempre
+    let stalled = false;
+    const watch = setInterval(() => {
+      if (Date.now() - last < STALL_MS) return;
+      stalled = true;
+      void conversion.cancel();
+    }, 5_000);
+    try {
+      await conversion.execute();
+    } catch (e) {
+      if (stalled) return { error: "stalled" };
+      throw e;
+    } finally {
+      clearInterval(watch);
+    }
     const buf = output.target.buffer;
     if (!buf) return { error: "cant_decode" };
     return { file: new File([buf], file.name.replace(/\.[^.]+$/, "") + ".mp4", { type: "video/mp4" }) };
