@@ -55,6 +55,7 @@ import { ApiError, portalApi, type IntegrationStatus } from "@/lib/portalApi";
 import { isoDay } from "@/lib/util";
 import { VersionHistory } from "@/components/VersionHistory";
 import { WithMenu } from "@/components/ContextMenu";
+import { pins } from "@/lib/pins";
 
 type Tab = "portal" | "documents" | "overview" | "content" | "calendar" | "tasks" | "brand" | "inspiration" | "process" | "grid" | "metrics" | "access" | "bin";
 const TABS: Tab[] = ["portal", "overview", "content", "calendar", "tasks", "brand", "inspiration", "documents", "process", "grid", "metrics", "access", "bin"];
@@ -73,6 +74,10 @@ function CustomerPage() {
   const router = useRouter();
   const sp = useSearchParams();
   const tab = (TABS.includes(sp.get("tab") as Tab) ? sp.get("tab") : "portal") as Tab;
+  // "recentes" da lista de clientes: este cliente foi aberto agora
+  useEffect(() => {
+    if (id) pins.touch("customer", id);
+  }, [id]);
   // abas fixadas com o botão direito (guardadas neste browser)
   const [pinnedTabs, setPinnedTabs] = useState<Tab[]>([]);
   useEffect(() => {

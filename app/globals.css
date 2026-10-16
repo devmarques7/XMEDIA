@@ -3590,3 +3590,14 @@ button.fin-tile:hover, button.fin-tile[aria-pressed="true"] { border-color: var(
 .tab.pinned { font-weight: 600; }
 .tab-pin { margin-right: 4px; color: var(--accent); vertical-align: -1px; }
 @media (max-width: 760px) { .cu-head { flex-wrap: wrap; } .cu-actions { flex-wrap: wrap; } }
+.dialog.qt { width: min(460px, 100%); display: grid; gap: 12px; }
+
+/* Clientes fixados (grupo de avatares) e linha fixada */
+.pin-bar { display: flex; align-items: center; gap: 12px; margin: 0 0 12px; min-height: 40px; }
+.av-group { display: inline-flex; align-items: center; }
+.av-group-i { padding: 0; border: 0; background: none; border-radius: 999px; cursor: pointer; transition: transform .15s ease; }
+.av-group-i + .av-group-i { margin-left: -8px; }
+.av-group-i .av { box-shadow: 0 0 0 2px var(--bg); }
+.av-group-i:hover { transform: translateY(-2px); z-index: 1; }
+.av-group-i:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+tr.is-pinned td:first-child { box-shadow: inset 2px 0 0 var(--accent); }
