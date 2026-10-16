@@ -22,6 +22,11 @@ import { CUSTOMER_SAVED, customerStore } from "@/lib/customerStore";
 import { ensureBundledInvoices } from "@/lib/invoiceStore";
 import { useT, type Key } from "@/lib/i18n";
 import { isoDay, pad } from "@/lib/util";
+import { WithMenu, type MenuAction } from "@/components/ContextMenu";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/Tooltip";
+import { QuickTask } from "@/components/QuickTask";
+import { Avatar } from "@/components/team/Avatar";
+import { pinnedFirst, pins, usePins, useRecent } from "@/lib/pins";
 
 const LS_VIEW = "xmedia:customers:view";
 const STAGE_TONE: Record<CStage, string> = { not_started: "muted", stage0: "", stage1: "tone-warn", stage2: "tone-warn", stage3: "tone-warn", stage4: "tone-warn", complete: "tone-ok" };
@@ -41,6 +46,24 @@ export default function CustomersPage() {
   const [preview, setPreview] = useState<Customer | null>(null);
   const { isOpen, onRow } = useRowExpand();
   const [inviteFor, setInviteFor] = useState<Customer | null>(null);
+  const [taskFor, setTaskFor] = useState<Customer | null>(null);
+  const pinned = usePins("customer");
+  const recent = useRecent("customer");
+  const ordered = useMemo(() => pinnedFirst(list ?? [], pinned, recent), [list, pinned, recent]);
+  const pinnedList = pinned.map((id) => (list ?? []).find((c) => c.id === id)).filter((c): c is Customer => !!c);
+  /** Ações do clique direito num cliente. */
+  const menu = (c: Customer): MenuAction[] => [
+    { title: c.name },
+    { label: t("cm.visit"), icon: <Icon name="eye" size={13} />, onSelect: () => router.push(`/clientes/${c.id}`) },
+    { label: pinned.includes(c.id) ? t("cm.unpin") : t("cm.pin"), icon: <Icon name="flag" size={13} />, onSelect: () => pins.toggle("customer", c.id) },
+    "sep",
+    { label: t("cm.newTask"), icon: <Icon name="task" size={13} />, onSelect: () => setTaskFor(c) },
+    { label: t("cm.newContent"), icon: <Icon name="plus" size={13} />, onSelect: () => router.push(`/clientes/${c.id}?tab=content`) },
+    { label: t("cm.edit"), icon: <Icon name="edit" size={13} />, onSelect: () => router.push(`/clientes/${c.id}?tab=overview`) },
+    "sep",
+    { label: t("cm.copyLink"), icon: <Icon name="link" size={13} />, onSelect: () => navigator.clipboard.writeText(`${location.origin}/clientes/${c.id}`).catch(() => {}) },
+    { label: t("cm.openNew"), icon: <Icon name="next" size={13} />, onSelect: () => window.open(`/clientes/${c.id}`, "_blank", "noopener") },
+  ];
   useEffect(() => {
     if (fin) invoiceStore.list().then(setInvoices).catch(() => {});
   }, [fin]);
@@ -178,10 +201,38 @@ export default function CustomersPage() {
         />
       )}
 
+      {!!list?.length && (
+        <div className="pin-bar" data-testid="pin-bar">
+          <span className="label muted">{t("pin.title")}</span>
+          {pinnedList.length ? (
+            <span className="av-group">
+              {pinnedList.map((c) => (
+                <Tooltip key={c.id}>
+                  <TooltipTrigger asChild>
+                    <WithMenu actions={menu(c)}>
+                      <button className="av-group-i" onClick={() => router.push(`/clientes/${c.id}`)} aria-label={c.name} data-testid="pin-av">
+                        <Avatar name={c.name} photo={c.cover || c.instagram.picture} size={34} />
+                      </button>
+                    </WithMenu>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <b>{c.name}</b>
+                    <span className="tt-sub">{t(`cu.stage.${c.stage}` as Key)}</span>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </span>
+          ) : (
+            <span className="muted small">{t("pin.hint")}</span>
+          )}
+        </div>
+      )}
+      {taskFor && <QuickTask customer={taskFor} onClose={() => setTaskFor(null)} onDone={setToast} />}
+
       {!!list?.length && view === "kanban" && (
         <div className={`kanban ${dnd.board}`} data-kb-scroll>
           {CSTAGES.map((s) => {
-            const items = list.filter((c) => c.stage === s);
+            const items = ordered.filter((c) => c.stage === s);
             return (
               <section key={s} {...dnd.col(s)} className={`kcol ${dnd.col(s).className}`}>
                 <header className="kcol-head">
@@ -192,8 +243,8 @@ export default function CustomersPage() {
                   const pr = stageProgress(c);
                   const np = nextPost(c.id);
                   return (
+                    <WithMenu key={c.id} actions={menu(c)}>
                     <article
-                      key={c.id}
                       className={`kcard cu-card kb-card ${dnd.card(c.id, s).className}`}
                       data-kb-card={c.id}
                       onPointerDown={dnd.card(c.id, s).onPointerDown}
@@ -222,6 +273,7 @@ export default function CustomersPage() {
                       {np && <span className="small muted"><Icon name="clock" size={14} /> {when(np.scheduled_at)}</span>}
                       {stageSelect(c, "kcard-stage")}
                     </article>
+                    </WithMenu>
                   );
                 })}
               </section>
@@ -244,7 +296,7 @@ export default function CustomersPage() {
                 </tr>
               </thead>
               <tbody>
-                {list.map((c) => {
+                {ordered.map((c) => {
                   const pr = stageProgress(c);
                   const np = nextPost(c.id);
                   const ps = planState(c, isoDay());
@@ -271,10 +323,14 @@ export default function CustomersPage() {
                   const open = isOpen(c.id);
                   return (
                     <Fragment key={c.id}>
-                      <tr className={open ? "open has-exp" : ""} style={{ cursor: "pointer" }} onClick={() => onRow(c.id, () => router.push(`/clientes/${c.id}`))}>
+                      <WithMenu actions={menu(c)}>
+                      <tr className={`${open ? "open has-exp" : ""} ${pinned.includes(c.id) ? "is-pinned" : ""}`} style={{ cursor: "pointer" }} onClick={() => onRow(c.id, () => router.push(`/clientes/${c.id}`))} data-testid="cu-row">
                         <td className="rt-main">
                           <span style={{ minWidth: 0 }}>
-                            <span className="cell-title">{c.name}</span>
+                            <span className="cell-title">
+                              {pinned.includes(c.id) && <Icon name="flag" size={11} className="tab-pin" />}
+                              {c.name}
+                            </span>
                             <span className="muted small" style={{ display: "block" }}>
                               {[c.contact || c.email, c.instagram.handle && `@${c.instagram.handle}${c.instagram.connected ? " ✓" : ""}`, pr.total ? `${pr.done}/${pr.total}` : "", np ? `◷ ${when(np.scheduled_at)}` : ""].filter(Boolean).join(" · ")}
                             </span>
@@ -295,6 +351,7 @@ export default function CustomersPage() {
                           <RowActions actions={actions} />
                         </td>
                       </tr>
+                      </WithMenu>
                       <tr className={`rt-exp ${open ? "open" : ""}`}>
                         <td colSpan={5}>
                           <ExpandedActions actions={actions} />

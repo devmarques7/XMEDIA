@@ -4,7 +4,8 @@ import { Icon } from "@/components/Icon";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Logo } from "@/components/Logo";
-import { LangSwitch } from "@/components/ui";
+import { AppShell, LangSwitch } from "@/components/ui";
+import { supabase, supabaseEnabled } from "@/lib/supabase/client";
 import { useT, type Lang } from "@/lib/i18n";
 
 type Section = { id: string; who: string; title: string; steps: string[]; note?: string };
@@ -295,9 +296,92 @@ function Rich({ text, copy, copied }: { text: string; copy: string; copied: stri
   );
 }
 
+/** Atalhos e comandos da app (teclado e clique direito). */
+const SHORTCUTS: Record<"pt" | "en" | "nl", { title: string; intro: string; rows: [string, string][] }> = {
+  pt: {
+    title: "Atalhos e comandos",
+    intro: "Funcionam em toda a app (fora dos campos de texto, onde as teclas são as do próprio campo).",
+    rows: [
+      ["⌘K / Ctrl+K", "Pesquisar em tudo (clientes, conteúdos, invoices, propostas, serviços)"],
+      ["⌘Z / Ctrl+Z", "Desfazer a última alteração"],
+      ["⇧⌘Z / Ctrl+Y", "Refazer"],
+      ["⌘B / Ctrl+B", "Recolher / abrir a barra lateral"],
+      ["Botão direito numa aba do cliente", "Fixar a aba (aparece primeiro)"],
+      ["Botão direito num cliente", "Abrir perfil, fixar, criar tarefa, criar conteúdo, editar, copiar link"],
+      ["Histórico (em cada item)", "Ver as versões guardadas e restaurar uma"],
+      ["Enter / Esc", "Confirmar / fechar janelas e menus"],
+    ],
+  },
+  en: {
+    title: "Shortcuts and commands",
+    intro: "They work across the app (outside text fields, where keys belong to the field).",
+    rows: [
+      ["⌘K / Ctrl+K", "Search everything (clients, content, invoices, proposals, services)"],
+      ["⌘Z / Ctrl+Z", "Undo the last change"],
+      ["⇧⌘Z / Ctrl+Y", "Redo"],
+      ["⌘B / Ctrl+B", "Collapse / expand the sidebar"],
+      ["Right-click a client tab", "Pin the tab (shows first)"],
+      ["Right-click a client", "Open profile, pin, create task, create content, edit, copy link"],
+      ["History (on each item)", "See saved versions and restore one"],
+      ["Enter / Esc", "Confirm / close dialogs and menus"],
+    ],
+  },
+  nl: {
+    title: "Sneltoetsen en opdrachten",
+    intro: "Ze werken in de hele app (buiten tekstvelden, waar de toetsen van het veld zijn).",
+    rows: [
+      ["⌘K / Ctrl+K", "Alles doorzoeken (klanten, content, facturen, voorstellen, diensten)"],
+      ["⌘Z / Ctrl+Z", "Laatste wijziging ongedaan maken"],
+      ["⇧⌘Z / Ctrl+Y", "Opnieuw"],
+      ["⌘B / Ctrl+B", "Zijbalk in- / uitklappen"],
+      ["Rechtsklik op een klanttab", "Tab vastzetten (komt eerst)"],
+      ["Rechtsklik op een klant", "Profiel openen, vastzetten, taak maken, content maken, bewerken, link kopiëren"],
+      ["Geschiedenis (bij elk item)", "Opgeslagen versies bekijken en er één herstellen"],
+      ["Enter / Esc", "Bevestigen / vensters en menu's sluiten"],
+    ],
+  },
+};
+
 export default function Tutorial() {
   const { lang } = useT();
   const c = CONTENT[lang];
+  // com sessão: dentro do layout da app (barra lateral para voltar ao contexto); sem sessão: página pública
+  const [inApp, setInApp] = useState<boolean | null>(null);
+  useEffect(() => {
+    if (!supabaseEnabled) return setInApp(true);
+    supabase()
+      .auth.getSession()
+      .then(({ data }) => setInApp(!!data.session))
+      .catch(() => setInApp(false));
+  }, []);
+  const sc = SHORTCUTS[lang as "pt" | "en" | "nl"] ?? SHORTCUTS.en;
+  const body = (
+    <>
+      <section className="w tut-keys" id="atalhos" style={{ marginBottom: 14, scrollMarginTop: 16 }}>
+        <div className="w-head">
+          <span className="label">
+            <b>⌘</b>
+            {sc.title}
+          </span>
+        </div>
+        <p className="muted small" style={{ margin: "0 0 10px" }}>
+          {sc.intro}
+        </p>
+        <dl className="kbd-list">
+          {sc.rows.map(([k, v]) => (
+            <div key={k}>
+              <dt>
+                <kbd>{k}</kbd>
+              </dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+    </>
+  );
+  if (inApp === null) return null;
+  if (inApp) return <AppShell><TutorialBody c={c} extra={body} /></AppShell>;
   return (
     <main className="wrap" style={{ maxWidth: 860 }}>
       <div className="bar">
@@ -306,6 +390,14 @@ export default function Tutorial() {
         </Link>
         <LangSwitch />
       </div>
+      <TutorialBody c={c} extra={body} />
+    </main>
+  );
+}
+
+function TutorialBody({ c, extra }: { c: (typeof CONTENT)[keyof typeof CONTENT]; extra: React.ReactNode }) {
+  return (
+    <>
 
       <section className="pagehead">
         <div>
@@ -317,6 +409,7 @@ export default function Tutorial() {
         </div>
       </section>
 
+      {extra}
       <nav className="row" style={{ marginBottom: 18 }}>
         {c.sections.map((s, i) => (
           <a key={s.id} href={`#${s.id}`} className="chip">
@@ -351,6 +444,6 @@ export default function Tutorial() {
       <Link href="/login" className="btn solid" style={{ marginTop: 8 }}>
         <Icon name="back" size={14} /> {c.back}
       </Link>
-    </main>
+    </>
   );
 }

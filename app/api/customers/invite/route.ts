@@ -8,9 +8,9 @@ import { createInvite } from "@/lib/server/portalTeam";
  */
 export async function POST(req: Request) {
   try {
-    const { customerId, userId, send = false } = (await req.json()) as { customerId: string; userId: string; send?: boolean };
+    const { customerId, userId, send = false, lang } = (await req.json()) as { customerId: string; userId: string; send?: boolean; lang?: "pt" | "en" | "nl" };
     const { customer: c } = await requireOwnCustomer(customerId);
-    return Response.json(await createInvite(c, userId, send, new URL(req.url).origin));
+    return Response.json(await createInvite(c, userId, send, new URL(req.url).origin, lang === "pt" || lang === "nl" || lang === "en" ? lang : undefined));
   } catch (e) {
     return fail(e);
   }

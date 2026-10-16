@@ -275,7 +275,7 @@ function RequestDialog({ customers, initial, onClose, onDone }: { customers: Cus
   const c = customers.find((x) => x.id === id) ?? null;
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [lang, setLang] = useState<Lang>("pt");
+  const [lang, setLang] = useState<Lang>("en"); // emails em inglês por omissão
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [res, setRes] = useState<SendResult | null>(null);

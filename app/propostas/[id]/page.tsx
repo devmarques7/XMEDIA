@@ -31,6 +31,7 @@ import { PROPOSAL_SAVED, proposalStore } from "@/lib/proposalStore";
 import { isLocalMode } from "@/lib/store";
 import { supabaseEnabled } from "@/lib/supabase/client";
 import { pad } from "@/lib/util";
+import { VersionHistory } from "@/components/VersionHistory";
 
 type Tab = "content" | "pricing" | "deal" | "design" | "json";
 
@@ -134,6 +135,7 @@ export default function ProposalEditor() {
           )}
         </div>
         <div className="row">
+          <VersionHistory entity="proposal" id={p.id} className="btn" />
           <Link className="btn" href={`/propostas/${p.id}/apresentar`} target="_blank">
             <Icon name="play" size={14} /> {t("pr.present")}
           </Link>

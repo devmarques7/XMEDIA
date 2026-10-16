@@ -37,7 +37,7 @@ type Account = { k: Kind; id: string; email: string; name: string; lang: Lang };
 async function accountOf(email: string): Promise<Account | null> {
   const db = serviceClient();
   const admins = adminEmails();
-  if (admins.includes(email)) return { k: "admin", id: email, email, name: "", lang: "pt" };
+  if (admins.includes(email)) return { k: "admin", id: email, email, name: "", lang: "en" };
   const { data: ms } = await db.from("team_members").select("id, name, lang, status, active").eq("email", email);
   const m = (ms ?? []).find((x) => x.status === "active" && x.active);
   if (m) return { k: "member", id: m.id, email, name: m.name, lang: (m.lang as Lang) || "en" };

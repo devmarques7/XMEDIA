@@ -4,6 +4,7 @@
 // Completo na página /tarefas; compacto no Estúdio (só atrasadas, hoje e semana, sem sugestões).
 import { DayPlanner } from "./DayPlanner";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Collapsible } from "@/components/Collapsible";
 import { Icon } from "@/components/Icon";
@@ -14,6 +15,9 @@ import { COMPANY, autoPlan, byRank, dueTag, reorder, type PlanRange, isInternal,
 import { Avatar } from "./Avatar";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/Tooltip";
 import { TypeIcon } from "@/components/customer/parts";
+import { WithMenu, type MenuAction } from "@/components/ContextMenu";
+import { matchPosts } from "@/lib/changeRequests";
+import { POST_TYPES, emptyPost, type ContentPost, type PostType } from "@/lib/customer";
 import { AssigneePicker } from "./Assignees";
 import { TodayCalendar } from "./TodayCalendar";
 import { CapacityBar } from "./Capacity";
@@ -111,12 +115,15 @@ function EditableTitle({ value, label, onSave }: { value: string; label: string;
 
 export function TodayList({ S, compact, max = 8, clientId, filter: outer, onFilter }: { S: S; compact?: boolean; max?: number; clientId?: string; /** Filtro controlado pela página (avatar do topo). */ filter?: Filter; onFilter?: (f: Filter) => void }) {
   const { t, locale } = useT();
+  const router = useRouter();
   const today = ymd(new Date());
   const [own, setOwn] = useState<Filter>("all");
   const filter = outer ?? own;
   const setFilter = onFilter ?? setOwn;
   const [title, setTitle] = useState("");
   const [cust, setCust] = useState(COMPANY);
+  // ligar a tarefa nova a um conteúdo: "" | id de um conteúdo | "new:<tipo>" (cria o conteúdo e liga)
+  const [link, setLink] = useState("");
   const [when, setWhen] = useState<When>("today");
   const [tab, setTab] = useState<When | "done">("today");
   const [planning, setPlanning] = useState(false);
@@ -207,8 +214,18 @@ export function TodayList({ S, compact, max = 8, clientId, filter: outer, onFilt
     const c = cust === COMPANY ? { id: COMPANY, name: "XMEDIA" } : client(cust);
     const name = (extra?.title ?? title).trim();
     if (!name || !c) return;
-    const task = newTask({ title: name, by: person(S.me)?.name || "MediaMarques", side: "studio", internal: true, due: dueFor(when), assignee: S.me || undefined, mentions: S.me ? [S.me] : [], progress: "todo", ...extra });
+    // ligada a um conteúdo existente, ou cria agora o conteúdo (rascunho interno) com o título da tarefa
+    let post_id = extra?.post_id ?? "";
+    if (!extra && link && cust !== COMPANY) {
+      if (link.startsWith("new:")) {
+        const type = link.slice(4) as PostType;
+        const saved = await S.savePost({ ...emptyPost(cust, type), title: name, internal: true });
+        post_id = (saved as ContentPost | undefined)?.id ?? "";
+      } else post_id = link;
+    }
+    const task = newTask({ title: name, by: person(S.me)?.name || "MediaMarques", side: "studio", internal: true, due: dueFor(when), assignee: S.me || undefined, mentions: S.me ? [S.me] : [], progress: "todo", ...extra, post_id });
     setTitle("");
+    setLink("");
     await S.saveTask({ ...task, customer_id: extra?.customer_id ?? c.id, customer: extra?.customer ?? c.name });
     input.current?.focus();
   }
@@ -244,6 +261,17 @@ export function TodayList({ S, compact, max = 8, clientId, filter: outer, onFilt
     const c = x.t.customer_id ? client(x.t.customer_id) : null;
     const owners = [...new Set([taskOwner(x.t), ...x.t.mentions.map((m) => m.toLowerCase())].filter(Boolean))];
     return (
+      <WithMenu
+        actions={[
+          { title: x.t.title },
+          { label: x.t.done ? t("cm.reopen") : t("cm.done"), icon: <Icon name="check" size={13} />, onSelect: () => toggle(x) },
+          ...(x.post ? [{ label: t("cm.openContent"), icon: <TypeIcon type={x.post.type} />, onSelect: () => router.push(`/clientes/${x.post!.customer_id}?tab=content&post=${x.post!.id}`) }] : []),
+          ...(x.t.customer_id && x.t.customer_id !== COMPANY ? [{ label: t("cm.visit"), icon: <Icon name="eye" size={13} />, onSelect: () => router.push(`/clientes/${x.t.customer_id}`) }] : []),
+          ...(!x.t.done ? [{ label: t("td.postpone"), icon: <Icon name="next" size={13} />, onSelect: () => postpone(x) }] : []),
+          "sep",
+          { label: t("cm.delete"), icon: <Icon name="trash" size={13} />, danger: true, onSelect: () => S.saveTask({ ...x.t, deleted: true }) },
+        ] as MenuAction[]}
+      >
       <li
         key={x.t.id}
         className={`td-row ${x.t.done ? "done" : ""} ${x.bucket} ${sortDrag?.id === x.t.id ? "sorting" : ""} ${sortMark(x.t.id)}`}
@@ -251,15 +279,24 @@ export function TodayList({ S, compact, max = 8, clientId, filter: outer, onFilt
         data-row-id={x.t.id}
         data-testid="td-row"
       >
-        {!compact && !x.t.done && (
-          <button className="td-grip-sort" onPointerDown={(e) => gripDown(e, x.t.id)} onPointerMove={gripMove} onPointerUp={gripUp} onPointerCancel={() => setSortDrag(null)} aria-label={t("td.dragOrder")} title={t("td.dragOrder")} data-testid="td-grip">
-            <Icon name="grip" size={14} />
-          </button>
-        )}
-        {!compact && !x.t.done && orderRef.current.findIndex((y) => y.t.id === x.t.id) > 0 && (
-          <button className="td-totop" onClick={() => toTop(x)} aria-label={t("td.toTop")} title={t("td.toTop")} data-testid="td-totop">
-            <Icon name="arrowUp" size={13} />
-          </button>
+        {!compact && (
+          // coluna fixa (arrastar / subir ao topo): todas as linhas alinham, mesmo a primeira (sem "subir")
+          <span className="td-lead">
+            {!x.t.done ? (
+              <button className="td-grip-sort" onPointerDown={(e) => gripDown(e, x.t.id)} onPointerMove={gripMove} onPointerUp={gripUp} onPointerCancel={() => setSortDrag(null)} aria-label={t("td.dragOrder")} title={t("td.dragOrder")} data-testid="td-grip">
+                <Icon name="grip" size={14} />
+              </button>
+            ) : (
+              <span className="td-ph" />
+            )}
+            {!x.t.done && orderRef.current.findIndex((y) => y.t.id === x.t.id) > 0 ? (
+              <button className="td-totop" onClick={() => toTop(x)} aria-label={t("td.toTop")} title={t("td.toTop")} data-testid="td-totop">
+                <Icon name="arrowUp" size={13} />
+              </button>
+            ) : (
+              <span className="td-ph" />
+            )}
+          </span>
         )}
         <button className="td-check" role="checkbox" aria-checked={x.t.done} aria-label={x.t.title} onClick={() => toggle(x)} data-testid="td-check">
           {x.t.done && <Icon name="check" size={14} strokeWidth={2.4} />}
@@ -273,19 +310,35 @@ export function TodayList({ S, compact, max = 8, clientId, filter: outer, onFilt
               {c?.name ?? t("td.internal")}
             </span>
             {x.post && (
-              <Link href={`/clientes/${x.post.customer_id}?tab=content&post=${x.post.id}`} className="td-video">
-                <TypeIcon type={x.post.type} /> <span className="td-video-k">{t(`ct.type.${x.post.type}` as Key)}</span> {x.post.title || ""}
-              </Link>
+              // largura máxima (com "…"); o nome completo aparece na tooltip
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link href={`/clientes/${x.post.customer_id}?tab=content&post=${x.post.id}`} className="td-video" data-testid="td-video">
+                    <TypeIcon type={x.post.type} /> <span className="td-video-k">{t(`ct.type.${x.post.type}` as Key)}</span> <span className="td-video-t">{x.post.title || ""}</span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" align="start">
+                  <b>{x.post.title || t(`ct.type.${x.post.type}` as Key)}</b>
+                  <span className="tt-sub">
+                    {t(`ct.type.${x.post.type}` as Key)} · {c?.name ?? ""}
+                  </span>
+                </TooltipContent>
+              </Tooltip>
             )}
-            {x.alerts
-              .filter((a) => a !== "late")
-              .map((a) => (
-                <span key={a} className={`label ${a === "stalled" || a === "changes" ? "tone-danger" : "muted"}`}>
-                  {t(`td.alert.${a}` as Key)}
-                </span>
-              ))}
+            {x.alerts.some((a) => a !== "late") && (
+              <span className="td-alerts">
+                {x.alerts
+                  .filter((a) => a !== "late")
+                  .map((a) => (
+                    <span key={a} className={`label ${a === "stalled" || a === "changes" ? "tone-danger" : "muted"}`}>
+                      {t(`td.alert.${a}` as Key)}
+                    </span>
+                  ))}
+              </span>
+            )}
           </span>
         </span>
+        <span className="td-right">
         {!x.t.done && (
           // prazo: clicar abre o calendário (e "×" tira o prazo)
           <label className={`dtag d-${dueTag(x.t.due)} td-due td-due-pick`} title={t("td.setDue")} data-testid="td-due" onClick={(e) => e.stopPropagation()}>
@@ -329,7 +382,9 @@ export function TodayList({ S, compact, max = 8, clientId, filter: outer, onFilt
             <Icon name="close" size={14} />
           </button>
         )}
+        </span>
       </li>
+      </WithMenu>
     );
   };
 
@@ -406,6 +461,13 @@ export function TodayList({ S, compact, max = 8, clientId, filter: outer, onFilt
   const myGoals = S.goals.filter((g) => g.member === S.me && g.week === weekOf());
   const TEMPLATES = ["tpl.plan", "tpl.review", "tpl.previews", "tpl.shoot", "tpl.reply"] as const;
   const target = scope === "all" ? COMPANY : scope;
+  // conteúdos do cliente escolhido (para ligar a tarefa nova) e sugestão pelo título escrito
+  const clientPosts = useMemo(() => S.posts.filter((p) => p.customer_id === cust && !p.deleted_at && p.status !== "published").sort((a, b) => (b.phase_since ?? "").localeCompare(a.phase_since ?? "")).slice(0, 60), [S.posts, cust]);
+  const suggested = useMemo(() => {
+    if (cust === COMPANY || title.trim().length < 4) return null;
+    const hit = matchPosts(clientPosts, S.customers ?? [], title)[0];
+    return hit && hit.score >= 50 ? hit.post : null;
+  }, [clientPosts, title, cust, S.customers]);
   const videoTask = (postId: string) => {
     const v = pend.find((x) => x.p.id === postId);
     if (v) addPending(v);
@@ -448,10 +510,36 @@ export function TodayList({ S, compact, max = 8, clientId, filter: outer, onFilt
           <form className="td-add" onSubmit={(e) => (e.preventDefault(), add())}>
             <Icon name="plus" size={18} />
             <input ref={input} className="input" value={title} onChange={(e) => setTitle(e.target.value)} placeholder={t("td.addPh")} data-testid="td-add" />
+            {cust !== COMPANY && (
+              <Select className="select td-link" value={link} onChange={(e) => setLink(e.target.value)} aria-label={t("tl.link")} data-testid="td-link">
+                <option value="">{t("tl.none")}</option>
+                <optgroup label={t("tl.createAs")}>
+                  {POST_TYPES.map((ty) => (
+                    <option key={ty} value={`new:${ty}`}>
+                      ＋ {t(`ct.type.${ty}` as Key)}
+                    </option>
+                  ))}
+                </optgroup>
+                {clientPosts.length > 0 && (
+                  <optgroup label={t("tl.existing")}>
+                    {clientPosts.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {t(`ct.type.${p.type}` as Key)} · {p.title || "—"}
+                      </option>
+                    ))}
+                  </optgroup>
+                )}
+              </Select>
+            )}
             <span className="mono small muted td-add-when">
               {target === COMPANY ? t("td.internal") : client(target)?.name} · {t(`td.when.${when}` as Key)}
             </span>
           </form>
+          {suggested && !link && (
+            <button type="button" className="td-suggest" onClick={() => setLink(suggested.id)} data-testid="td-suggest">
+              <Icon name="link" size={12} /> {t("tl.suggest")} <TypeIcon type={suggested.type} /> <b>{suggested.title}</b>
+            </button>
+          )}
 
           <div className="td-bar">
             <div className="seg" role="group" aria-label="filter">

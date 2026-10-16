@@ -6,10 +6,12 @@ import { sendEmail } from "@/lib/inviteEmail";
 import { portalInviteEmail } from "@/lib/portalInviteEmail";
 import { HttpError, hashToken, serviceClient } from "./admin";
 import { listCustomerUsers, refreshPortalSummary } from "./portal";
+import type { Lang } from "@/lib/i18n";
 
 const EMAIL = /^[^@\s,()]+@[^@\s,()]+\.[^@\s,()]+$/;
 
-export async function createInvite(c: Customer, userId: string, send: boolean, origin: string) {
+/** `lang`: língua do email escolhida no envio (sem ela, a do cliente; e inglês se nenhuma). */
+export async function createInvite(c: Customer, userId: string, send: boolean, origin: string, lang?: Lang, next?: string) {
   if (c.portal.status === "disabled") throw new HttpError(409, "disabled");
   const db = serviceClient();
   const { data: u } = await db.from("customer_users").select("id, email, name, status").eq("id", userId).eq("customer_id", c.id).maybeSingle();
@@ -23,8 +25,8 @@ export async function createInvite(c: Customer, userId: string, send: boolean, o
     .eq("id", u.id);
   if (error) throw error;
   await refreshPortalSummary(c.id);
-  const link = `${origin}/portal/convite/${token}`;
-  const mail = portalInviteEmail({ lang: c.lang, name: u.name || u.email, customer: c.name, email: u.email, link, expiresAt: expires, origin });
+  const link = `${origin}/portal/convite/${token}${next ? `?next=${encodeURIComponent(next)}` : ""}`;
+  const mail = portalInviteEmail({ lang: lang ?? c.lang ?? "en", name: u.name || u.email, customer: c.name, email: u.email, link, expiresAt: expires, origin });
   const email = send ? await sendEmail(u.email, mail) : { sent: false, reason: "not_sent" };
   return { link, expiresAt: expires.toISOString(), email, preview: { subject: mail.subject, html: mail.html, to: u.email } };
 }

@@ -29,6 +29,13 @@ export default function PortalInvite() {
       .catch((e) => setErr(tErr(e)));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+  // destino depois do onboarding (ex.: o conteúdo de um pedido de revisão): guardado até o portal abrir
+  useEffect(() => {
+    const nx = new URLSearchParams(location.search).get("next");
+    try {
+      if (nx && nx.startsWith("/portal")) sessionStorage.setItem("xmedia:portal:next", nx);
+    } catch {}
+  }, []);
 
   return (
     <AuthSplit top={info ? `${t("po.inviteTitle")} · ${info.name}` : t("po.inviteTitle")}>

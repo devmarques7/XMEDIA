@@ -116,7 +116,7 @@ type PortalApi = {
   saveUser(customerId: string, u: UserInput): Promise<CustomerUser[]>;
   removeUser(customerId: string, userId: string): Promise<CustomerUser[]>;
   /** send=false: só gera o link e a pré-visualização do email (nada é enviado). */
-  invite(customerId: string, userId: string, send?: boolean): Promise<InviteResult>;
+  invite(customerId: string, userId: string, send?: boolean, lang?: Lang): Promise<InviteResult>;
   access(customerId: string, action: "reset" | "disable" | "enable", userId?: string): Promise<void>;
   adminSync(customerId: string): Promise<void>;
   publishNow(postId: string): Promise<{ ok: boolean; error?: string }>;
@@ -195,7 +195,7 @@ const remote: PortalApi = {
   saveUser: async (customerId, u) => (await post<{ users: CustomerUser[] }>("/api/customers/users", { customerId, ...u })).users,
   removeUser: async (customerId, userId) =>
     (await api<{ users: CustomerUser[] }>(`/api/customers/users?customerId=${encodeURIComponent(customerId)}&id=${encodeURIComponent(userId)}`, { method: "DELETE" })).users,
-  invite: (customerId, userId, send = false) => post("/api/customers/invite", { customerId, userId, send }),
+  invite: (customerId, userId, send = false, lang) => post("/api/customers/invite", { customerId, userId, send, lang }),
   access: async (customerId, action, userId) => {
     await post("/api/customers/access", { customerId, action, userId });
   },

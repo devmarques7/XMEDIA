@@ -26,18 +26,27 @@ export function Cover({ src, alt = "", className = "" }: { src?: string; alt?: s
   return url ? <img src={url} alt={alt} className={className} loading="lazy" /> : <span className={`cv-empty ${className}`} aria-hidden />;
 }
 
-/** Vídeo com capa: a `poster` dada (capa do reel) ou, se não houver, o frame do meio do vídeo. */
-export function Video({ src, className = "", poster }: { src: string; className?: string; poster?: string }) {
+/**
+ * Vídeo com capa: a `poster` dada (capa do reel) ou, se não houver, o frame do meio do vídeo.
+ * `loop` (cartões do editor, pré-visualização do Instagram/portal): toca sozinho, sem som, em loop e sem controlos —
+ * para ver como vai sair. Sem capa gerada, mostra o 1.º frame (#t) em vez de um quadrado preto.
+ */
+export function Video({ src, className = "", poster, loop }: { src: string; className?: string; poster?: string; loop?: boolean }) {
   const url = useMediaSrc(src);
   const posterUrl = useMediaSrc(poster);
   const shown = useVideoPoster(url, posterUrl);
-  return url ? <StreamVideo className={className} src={url} poster={shown} controls muted playsInline preload="metadata" /> : null;
+  if (!url) return null;
+  if (loop) {
+    const withFrame = url.startsWith("blob:") || url.includes("#") ? url : `${url}#t=0.1`;
+    return <StreamVideo className={`${className} vloop`} src={withFrame} poster={shown} autoPlay muted loop playsInline preload="auto" disablePictureInPicture controlsList="nodownload noplaybackrate noremoteplayback nofullscreen" />;
+  }
+  return <StreamVideo className={className} src={url} poster={shown} controls muted playsInline preload="metadata" />;
 }
 
 /** Miniatura de um conteúdo: capa/imagem (thumbOf) ou, num vídeo sem capa, o frame do meio. */
 export function PostThumb({ p, className = "" }: { p: Pick<ContentPost, "type" | "cover" | "media">; className?: string }) {
   const thumb = thumbOf(p);
-  const video = thumb ? undefined : p.media.find((m) => m.kind === "video")?.src;
+  const video = thumb ? undefined : (p.media[0]?.kind === "video" ? p.media[0] : p.media.find((m) => m.kind === "video"))?.src;
   const videoUrl = useMediaSrc(video);
   const frame = useVideoPoster(videoUrl);
   if (thumb) return <Cover src={thumb} className={className} />;
@@ -202,7 +211,7 @@ function GridCell({ it, onOpen, onCover }: { it: GridItem; onOpen?: (p: ContentP
   const { t, locale } = useT();
   const file = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
-  const video = !it.cover && it.post ? it.post.media.find((m) => m.kind === "video")?.src : undefined;
+  const video = !it.cover && it.post ? (it.post.media[0]?.kind === "video" ? it.post.media[0] : it.post.media.find((m) => m.kind === "video"))?.src : undefined;
   const videoUrl = useMediaSrc(video);
   const frame = useVideoPoster(videoUrl); // reel sem capa: frame do meio
   const canCover = !!(it.post && onCover && it.post.type === "reel" && it.post.status !== "published");

@@ -317,7 +317,7 @@ export function Review({
               const c = notes.filter((n) => n.media === it.index && !n.done).length;
               return (
                 <button key={it.index} data-slide={it.index} className={`rv-thumb ${it.index === sel ? "on" : ""} ${dragPin?.moved && it.index !== sel ? "drop" : ""}`} onClick={() => setSel(it.index)} title={it.index === -1 ? t("rv.cover") : t("rv.slide", { n: it.index + 1 })}>
-                  {it.kind === "video" ? <span className="rv-vid"><Icon name="play" size={14} /></span> : <Cover src={it.src} />}
+                  {it.kind === "video" ? <VideoThumb src={it.src} /> : <Cover src={it.src} />}
                   {c > 0 && <i>{c}</i>}
                 </button>
               );
@@ -449,20 +449,39 @@ function StageVideo({
   onPlay: (p: boolean) => void;
 }) {
   const url = useMediaSrc(src);
-  const poster = useVideoPoster(url); // frame do meio enquanto não toca
+  const poster = useVideoPoster(url); // frame do meio enquanto carrega
   if (!url) return <span className="cv-empty" style={{ aspectRatio: "9/16" }} />;
+  // toca sozinho (sem som, em loop); clicar no vídeo pausa para comentar no frame exato
   return (
     <StreamVideo
       ref={ref}
-      src={url}
+      src={url.startsWith("blob:") || url.includes("#") ? url : `${url}#t=0.1`}
       poster={poster}
+      autoPlay
+      muted
+      loop
       playsInline
-      preload="metadata"
+      preload="auto"
       onTimeUpdate={(e) => onTime(e.currentTarget.currentTime)}
       onSeeked={(e) => onTime(e.currentTarget.currentTime)}
       onLoadedMetadata={(e) => onDur(e.currentTarget.duration)}
       onPlay={() => onPlay(true)}
       onPause={() => onPlay(false)}
     />
+  );
+}
+
+/** Miniatura de um vídeo na fila de slides: o frame do vídeo (nunca um quadrado vazio) com um pequeno ▶. */
+function VideoThumb({ src }: { src: string }) {
+  const url = useMediaSrc(src);
+  const frame = useVideoPoster(url);
+  return (
+    <span className="rv-vid">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {frame ? <img src={frame} alt="" /> : null}
+      <span className="rv-vid-b">
+        <Icon name="play" size={10} />
+      </span>
+    </span>
   );
 }

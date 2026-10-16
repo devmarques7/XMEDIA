@@ -33,7 +33,7 @@ export function IgPreview({ post, handle, picture }: { post: Pick<ContentPost, "
             {t("igp.empty")}
           </span>
         ) : cur.kind === "video" ? (
-          <Video src={cur.src} className="igp-fill" poster={hasCover(post.type) ? post.cover : undefined} />
+          <Video src={cur.src} className="igp-fill" poster={hasCover(post.type) ? post.cover : undefined} loop />
         ) : (
           <Cover src={cur.src} />
         )}

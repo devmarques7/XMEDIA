@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     const b = (await req.json()) as Body;
     const email = String(b.email ?? "").trim().toLowerCase();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) throw new HttpError(400, "bad_email");
-    const lang: Lang = b.lang === "en" || b.lang === "nl" ? b.lang : "pt";
+    const lang: Lang = b.lang === "pt" || b.lang === "nl" ? b.lang : "en"; // inglês por omissão
     const db = serviceClient();
     const { data: row } = await db.from("customers").select("id, data").eq("id", b.customerId).eq("owner_id", ownerId).maybeSingle();
     if (!row) throw new HttpError(404, "not_found");

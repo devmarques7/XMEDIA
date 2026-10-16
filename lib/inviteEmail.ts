@@ -73,16 +73,17 @@ const LABEL = {
 
 export function inviteEmail(o: { lang: Lang; name: string; inviter: string; link: string; expiresAt: Date; logoUrl: string; origin?: string; kind?: "team" | "portal" }) {
   const set = o.kind === "portal" ? PORTAL : COPY;
-  const c = set[o.lang] ?? set.pt;
-  const date = o.expiresAt.toLocaleDateString(LOCALE[o.lang] ?? "pt-PT", { day: "numeric", month: "long", year: "numeric" });
+  const lang: Lang = set[o.lang] ? o.lang : "en"; // inglês por omissão
+  const c = set[lang];
+  const date = o.expiresAt.toLocaleDateString(LOCALE[lang], { day: "numeric", month: "long", year: "numeric" });
   const v = { name: o.name, inviter: o.inviter || "XMEDIA", date };
   const subject = fill(c.subject, v);
   const text = [fill(c.hi, v), "", c.body, "", `${c.cta}: ${o.link}`, "", fill(c.expires, v), c.ignore].join("\n");
   const origin = o.origin ?? new URL(o.logoUrl).origin;
   const html = emailLayout({
-    lang: o.lang,
+    lang,
     origin,
-    label: o.kind === "portal" ? LABEL.portal[o.lang] : LABEL.team[o.lang],
+    label: o.kind === "portal" ? LABEL.portal[lang] : LABEL.team[lang],
     kicker: o.kind === "portal" ? "MediaMarques" : "XMEDIA",
     title: fill(c.hi, v),
     paragraphs: [c.body],

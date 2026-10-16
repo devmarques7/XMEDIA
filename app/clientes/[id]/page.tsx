@@ -53,6 +53,9 @@ import { LANGS, useT, type Key } from "@/lib/i18n";
 import { uploadMedia } from "@/lib/media";
 import { ApiError, portalApi, type IntegrationStatus } from "@/lib/portalApi";
 import { isoDay } from "@/lib/util";
+import { VersionHistory } from "@/components/VersionHistory";
+import { WithMenu } from "@/components/ContextMenu";
+import { pins } from "@/lib/pins";
 
 type Tab = "portal" | "documents" | "overview" | "content" | "calendar" | "tasks" | "brand" | "inspiration" | "process" | "grid" | "metrics" | "access" | "bin";
 const TABS: Tab[] = ["portal", "overview", "content", "calendar", "tasks", "brand", "inspiration", "documents", "process", "grid", "metrics", "access", "bin"];
@@ -71,6 +74,25 @@ function CustomerPage() {
   const router = useRouter();
   const sp = useSearchParams();
   const tab = (TABS.includes(sp.get("tab") as Tab) ? sp.get("tab") : "portal") as Tab;
+  // "recentes" da lista de clientes: este cliente foi aberto agora
+  useEffect(() => {
+    if (id) pins.touch("customer", id);
+  }, [id]);
+  // abas fixadas com o botão direito (guardadas neste browser)
+  const [pinnedTabs, setPinnedTabs] = useState<Tab[]>([]);
+  useEffect(() => {
+    try {
+      setPinnedTabs(JSON.parse(localStorage.getItem("xmedia:cu:pinnedTabs") || "[]"));
+    } catch {}
+  }, []);
+  const pinTab = (k: Tab, on: boolean) =>
+    setPinnedTabs((l) => {
+      const next = on ? [...l.filter((x) => x !== k), k] : l.filter((x) => x !== k);
+      try {
+        localStorage.setItem("xmedia:cu:pinnedTabs", JSON.stringify(next));
+      } catch {}
+      return next;
+    });
   const [toast, setToast] = useToast();
   const user = useUser();
   const [inviting, setInviting] = useState(false);
@@ -226,18 +248,23 @@ function CustomerPage() {
             </label>
           </DropZone>
           <div style={{ minWidth: 0 }}>
-            <span className="label muted">{t(`cu.stage.${c.stage}` as Key)}</span>
+            {/* estado: etiqueta pequena (clicar para mudar), em vez de um select grande */}
+            <label className={`stage-tag st-${c.stage}`} title={t("cu.col.stage")}>
+              <span>{t(`cu.stage.${c.stage}` as Key)}</span>
+              <Icon name="chevronDown" size={11} />
+              <select value={c.stage} onChange={(e) => update({ stage: e.target.value as CStage })} aria-label={t("cu.col.stage")} data-testid="cu-stage">
+                {CSTAGES.map((s) => (
+                  <option key={s} value={s}>
+                    {t(`cu.stage.${s}` as Key)}
+                  </option>
+                ))}
+              </select>
+            </label>
             <input className="input title" value={c.name} onChange={(e) => update({ name: e.target.value })} aria-label={t("cu.name")} />
           </div>
         </div>
-        <div className="row">
-          <Select className="select statussel" value={c.stage} onChange={(e) => update({ stage: e.target.value as CStage })} aria-label={t("cu.col.stage")}>
-            {CSTAGES.map((s) => (
-              <option key={s} value={s}>
-                {t(`cu.stage.${s}` as Key)}
-              </option>
-            ))}
-          </Select>
+        <div className="row cu-actions">
+          <VersionHistory entity="customer" id={c.id} className="btn" />
           <button className="btn accent" onClick={() => setInviting(true)} data-testid="cu-invite">
             + {t("iv.cta")}
           </button>
@@ -246,11 +273,24 @@ function CustomerPage() {
       {inviting && <InviteDialog customer={c} onClose={() => setInviting(false)} onDone={(m) => setToast(m)} />}
 
       <nav className="tabs cu-tabs" role="tablist">
-        {TABS.map((k) => (
-          <button key={k} role="tab" aria-selected={tab === k} className="tab" onClick={() => go(k)} {...(k === "bin" ? { "data-bin-target": "" } : {})}>
-            {t(`cu.tab.${k}` as Key)}
-            {k === "content" && counts.review > 0 && <span className="cu-dot">{counts.review}</span>}
-          </button>
+        {/* abas fixadas (botão direito → Fixar) aparecem primeiro */}
+        {[...pinnedTabs.filter((k) => TABS.includes(k)), ...TABS.filter((k) => !pinnedTabs.includes(k))].map((k) => (
+          <WithMenu
+            key={k}
+            actions={[
+              { title: t(`cu.tab.${k}` as Key) },
+              { label: t("cm.open"), icon: <Icon name="next" size={13} />, onSelect: () => go(k) },
+              pinnedTabs.includes(k)
+                ? { label: t("cm.unpinTab"), icon: <Icon name="close" size={13} />, onSelect: () => pinTab(k, false) }
+                : { label: t("cm.pinTab"), icon: <Icon name="flag" size={13} />, onSelect: () => pinTab(k, true) },
+            ]}
+          >
+            <button role="tab" aria-selected={tab === k} className={`tab ${pinnedTabs.includes(k) ? "pinned" : ""}`} onClick={() => go(k)} data-testid={`cu-tab-${k}`} {...(k === "bin" ? { "data-bin-target": "" } : {})}>
+              {pinnedTabs.includes(k) && <Icon name="flag" size={11} className="tab-pin" />}
+              {t(`cu.tab.${k}` as Key)}
+              {k === "content" && counts.review > 0 && <span className="cu-dot">{counts.review}</span>}
+            </button>
+          </WithMenu>
         ))}
       </nav>
 

@@ -219,6 +219,8 @@ export function PortalPreview({ customer, posts, settings = DEFAULT_SETTINGS, on
         </aside>
 
         <section className="pvw-portal" data-lang={lang}>
+          {/* na ficha do cliente (inline) o menu é o do admin (abas da ficha): sem um segundo menu aqui */}
+          {!inline && (
           <header className="po-top pvw-top">
             <span className="row" style={{ gap: 10, flexWrap: "nowrap" }}>
               <button className="pvw-toggle" onClick={() => setCollapsed((x) => !x)} aria-label={collapsed ? t("pv.expand") : t("pv.collapse")} title={collapsed ? t("pv.expand") : t("pv.collapse")} data-testid="pv-collapse">
@@ -245,6 +247,7 @@ export function PortalPreview({ customer, posts, settings = DEFAULT_SETTINGS, on
               <span className="cl-av">{(c.contact || c.name).slice(0, 2).toUpperCase()}</span>
             </span>
           </header>
+          )}
           <div className="po-wrap" style={{ paddingTop: 12, paddingBottom: 24 }}>
             {tab === "home" && (
               <>

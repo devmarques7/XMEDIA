@@ -111,7 +111,7 @@ export function PreviewPost({ post, ig, as, onChange, onClose }: { post: Content
                 >
                   <span className="pvp-img">
                     {m.kind === "video" ? (
-                      <Video src={m.src} poster={hasCover(p.type) ? p.cover : undefined} />
+                      <Video src={m.src} poster={hasCover(p.type) ? p.cover : undefined} loop />
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
                       <Cover src={m.src} />

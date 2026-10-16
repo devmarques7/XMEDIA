@@ -16,6 +16,7 @@ import { Cover, StatusLabel, TypeIcon, Video, useWhen } from "./parts";
 import { Review } from "./Review";
 import { IgPreview } from "./IgPreview";
 import { ReviewRequest } from "./ReviewRequest";
+import { VersionHistory } from "@/components/VersionHistory";
 
 const toInput = (iso: string) => {
   if (!iso) return "";
@@ -208,6 +209,7 @@ export function PostEditor({
               <Icon name={p.internal ? "lock" : "eye"} size={13} /> {p.internal ? t("pe.internal") : t("pe.visible")}
             </button>
             <StatusLabel status={p.status} />
+            <VersionHistory entity="post" id={p.id} />
             <button className="btn ghost" onClick={onClose} aria-label={t("ct.close")}>
               <Icon name="close" />
             </button>
@@ -287,8 +289,7 @@ export function PostEditor({
                     }}
                     data-testid="pe-tile"
                   >
-                    {m.kind === "video" ? <Video src={m.src} className="pe2-fill" poster={hasCover(p.type) ? p.cover : undefined} /> : <Cover src={m.src} />}
-                    {m.kind === "video" && <span className="pe2-play"><Icon name="play" size={14} /></span>}
+                    {m.kind === "video" ? <Video src={m.src} className="pe2-fill" poster={hasCover(p.type) ? p.cover : undefined} loop /> : <Cover src={m.src} />}
                     {isPending(m.src) && <span className="pe2-up mono">…</span>}
                     {p.media.length > 1 && <span className="pe2-n mono">{i + 1}</span>}
                     <button className="pe2-x" onClick={(e) => (e.stopPropagation(), set({ media: p.media.filter((_, j) => j !== i), notes: p.notes.map((n) => (n.media === i ? { ...n, deleted: true } : n.media > i ? { ...n, media: n.media - 1 } : n)) }))} aria-label={t("pe.removeFile")} title={t("pe.removeFile")} data-testid="pe-remove">

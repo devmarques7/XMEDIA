@@ -99,6 +99,19 @@ function Portal() {
   };
 
   const posts = useMemo(() => data?.posts ?? [], [data]);
+  // link direto para um conteúdo (?post=…), ou o destino guardado no convite (pedido de revisão → onboarding → conteúdo)
+  useEffect(() => {
+    if (!posts.length) return;
+    let id = sp.get("post");
+    try {
+      const nx = sessionStorage.getItem("xmedia:portal:next");
+      if (!id && nx) id = new URLSearchParams(nx.split("?")[1] ?? "").get("post");
+      sessionStorage.removeItem("xmedia:portal:next");
+    } catch {}
+    const p = id ? posts.find((x) => x.id === id) : undefined;
+    if (p) setOpen(p);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [posts.length]);
   const review = posts.filter((p) => p.status === "review");
 
   if (!data) return <main className="po" />;

@@ -27,6 +27,7 @@ import { SendInvoice } from "@/components/SendInvoice";
 import { INVOICE_SAVED } from "@/lib/ai/exec";
 import { invoiceStore } from "@/lib/invoiceStore";
 import { pad } from "@/lib/util";
+import { VersionHistory } from "@/components/VersionHistory";
 
 const COUNTRIES = ["NL", "GB", "BE", "DE", "FR", "PT", "ES", "IT", "IE", "US", "BR", "CH", "AE"];
 
@@ -163,6 +164,7 @@ export default function InvoiceEditor() {
               }}
             />
           )}
+          <VersionHistory entity="invoice" id={inv.id} className="btn" />
           {can(access, "finance.view") && !inv.void && (
             <button
               className="btn"
