@@ -3634,3 +3634,10 @@ kbd { display: inline-block; padding: 3px 8px; border: 1px solid var(--line); bo
 /* vídeo em loop (cartões, pré-visualizações): sem controlos nem botão de play por cima */
 video.vloop { pointer-events: none; background: var(--panel-2); }
 video.vloop::-webkit-media-controls, video.vloop::-webkit-media-controls-start-playback-button, video.vloop::-webkit-media-controls-overlay-play-button { display: none !important; -webkit-appearance: none; }
+
+/* Revisão: palco com limite (nenhum material ultrapassa), sem fundo preto; miniaturas de vídeo com o frame */
+.rv-media { max-width: min(100%, 460px); background: var(--panel-2); }
+.rv-media img, .rv-media video { max-width: min(100%, 460px); max-height: min(60dvh, 620px); }
+.rv-vid { position: relative; background: var(--panel-2); }
+.rv-vid img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.rv-vid-b { position: absolute; left: 3px; bottom: 3px; width: 16px; height: 16px; border-radius: 999px; display: grid; place-items: center; background: rgba(0, 0, 0, .6); color: #fff; }

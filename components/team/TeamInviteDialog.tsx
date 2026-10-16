@@ -22,11 +22,11 @@ const access = (l: Level): { app_role: AppRole; app_permissions: Perm[]; access:
   l === "admin" ? { app_role: "manager", app_permissions: [...PERMS], access: "admin" } : { app_role: l, app_permissions: ROLE_PRESETS[l], access: "member" };
 
 export function TeamInviteDialog({ onClose, onDone }: { onClose: () => void; onDone: (m: Member) => void }) {
-  const { t, lang: myLang } = useT();
+  const { t } = useT();
   const [step, setStep] = useState<1 | 2>(1);
   const [email, setEmail] = useState("");
   const [level, setLevel] = useState<Level>("production");
-  const [lang, setLang] = useState<Lang>(myLang);
+  const [lang, setLang] = useState<Lang>("en"); // emails em inglês por omissão (pode escolher-se PT / NL)
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [member, setMember] = useState<Member | null>(null);

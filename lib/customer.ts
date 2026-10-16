@@ -348,7 +348,7 @@ export function emptyCustomer(name = ""): Customer {
     contact: "",
     email: "",
     phone: "",
-    lang: "pt",
+    lang: "en", // inglês por omissão (emails e portal); muda-se na ficha do cliente
     stage: "not_started",
     done: [],
     contract_signed: false,

@@ -552,7 +552,7 @@ function MemberForm({ member, onToast, onChanged }: { member: Member | null; onT
         </label>
         <label className="field">
           <span>{t("inv.lang")}</span>
-          <Select className="select" name="lang" defaultValue={m.lang ?? "pt"}>
+          <Select className="select" name="lang" defaultValue={m.lang ?? "en"}>
             {LANGS.map((l) => (
               <option key={l} value={l}>
                 {l === "pt" ? "Português" : l === "en" ? "English" : "Nederlands"}

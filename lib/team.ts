@@ -70,7 +70,7 @@ export const emptyMember = (): Omit<Member, "id"> => ({
   rate_currency: "EUR",
   access: "member",
   active: true,
-  lang: "pt",
+  lang: "en",
   status: "draft",
   photo_url: "",
   city: "",

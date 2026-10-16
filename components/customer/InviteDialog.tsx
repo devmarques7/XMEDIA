@@ -5,7 +5,7 @@
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/Icon";
 import { CUSTOMER_USER_ROLES, type Customer, type CustomerUser, type CustomerUserRole } from "@/lib/customer";
-import { useT, type Key } from "@/lib/i18n";
+import { useT, type Key, type Lang } from "@/lib/i18n";
 import { portalApi, type InviteResult } from "@/lib/portalApi";
 
 export function InviteDialog({ customer, onClose, onDone }: { customer: Customer; onClose: () => void; onDone?: (msg: string) => void }) {
@@ -17,6 +17,7 @@ export function InviteDialog({ customer, onClose, onDone }: { customer: Customer
   const [role, setRole] = useState<CustomerUserRole>(customer.portal.status === "none" ? "owner" : "member");
   const [res, setRes] = useState<{ email: string; invite: InviteResult } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [mailLang, setMailLang] = useState<Lang>("en"); // língua do email (inglês por omissão)
   const [err, setErr] = useState("");
   useEffect(() => {
     portalApi.users(customer.id).then(setUsers).catch(() => {});
@@ -39,7 +40,7 @@ export function InviteDialog({ customer, onClose, onDone }: { customer: Customer
         setUsers(list);
       } else if (u.role !== role) await portalApi.saveUser(customer.id, { id: u.id, name: name.trim() || u.name, email: e, role });
       if (!u) throw new Error("not_found");
-      const invite = await portalApi.invite(customer.id, u.id, send);
+      const invite = await portalApi.invite(customer.id, u.id, send, mailLang);
       setRes({ email: e, invite });
       setStep(4);
       onDone?.(invite.email.sent ? t("cu.inviteSent", { email: e }) : t("tm.done"));
@@ -124,6 +125,16 @@ export function InviteDialog({ customer, onClose, onDone }: { customer: Customer
               </span>
             </div>
             {err && <p className="note tone-danger small">{err}</p>}
+            <div className="row" style={{ gap: 8 }}>
+              <span className="muted small">{t("cu.lang")}</span>
+              <div className="seg" role="group" aria-label={t("cu.lang")}>
+                {(["en", "pt", "nl"] as Lang[]).map((l) => (
+                  <button type="button" key={l} aria-pressed={mailLang === l} onClick={() => setMailLang(l)} data-testid={`iv-lang-${l}`}>
+                    {l.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="row between">
               <button className="btn ghost" onClick={() => setStep(2)}>
                 <Icon name="back" size={14} /> {t("tm.back")}
