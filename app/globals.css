@@ -3500,3 +3500,34 @@ button.fin-tile:hover, button.fin-tile[aria-pressed="true"] { border-color: var(
 .tt-arrow { fill: var(--fg); }
 @keyframes tt-in { from { opacity: 0; transform: translateY(-2px) scale(.98); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .tt { animation: none; } }
+
+/* Hoje · Calendário: dia compacto + cartões em linha (no máximo 3 por vez, com ‹ ›); reage ao espaço da coluna */
+.tcal-main { container-type: inline-size; container-name: tcal; }
+.tc-day { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.tc-day:last-child { border-bottom: 0; }
+.tc-num { display: flex; flex-direction: column; gap: 2px; }
+.tc-num span { font-weight: 600; font-size: 40px; line-height: .9; letter-spacing: -.04em; color: color-mix(in srgb, var(--fg) 80%, transparent); }
+.tc-num small { font-size: 13px; text-transform: capitalize; color: var(--muted); }
+.tc-day.is-today .tc-num span { color: var(--accent); }
+.tc-cards { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.tc-card { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 10px; align-items: center; width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--fg); font: inherit; text-align: left; text-decoration: none; cursor: pointer; }
+.tc-card:hover { border-color: var(--muted); }
+.tc-card.k-task { box-shadow: inset 3px 0 0 var(--fg); }
+.tc-card.k-dl { box-shadow: inset 3px 0 0 var(--accent); }
+.tc-card.k-pub { box-shadow: inset 3px 0 0 var(--muted); }
+.tc-card.done { opacity: .55; }
+.tc-card.done .tc-name { text-decoration: line-through; }
+.tc-ic { display: grid; place-items: center; color: var(--muted); font-size: 11.5px; }
+.tc-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tc-type { font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.tc-card.k-dl .tc-type { color: var(--accent); }
+.tc-name { font-weight: 500; font-size: 14px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.tc-pager { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+.tc-dots { display: inline-flex; gap: 4px; }
+.tc-dots i { width: 6px; height: 6px; border-radius: 999px; background: var(--line); }
+.tc-dots i.on { background: var(--fg); }
+@container tcal (max-width: 420px) {
+  .tc-day { grid-template-columns: 1fr; gap: 8px; }
+  .tc-num { flex-direction: row; align-items: baseline; gap: 8px; }
+  .tc-num span { font-size: 28px; }
+}
