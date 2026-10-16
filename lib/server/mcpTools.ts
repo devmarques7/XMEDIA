@@ -7,6 +7,7 @@ import { SEED_SERVICES } from "../services-seed";
 import { DEFAULT_FOLDERS, normalizeRules, normalizeService, withHistory, type PricingRules, type Service, type ServiceFolder } from "../services";
 import { serviceClient } from "./admin";
 import { CLIENT_TOOL_NAMES } from "../ai/clientTools";
+import { CONTENT_READ_TOOLS, CONTENT_WRITE_TOOLS } from "../ai/contentSkill";
 import { runClientTool } from "./clientMcp";
 import { ownerId } from "./owner";
 
@@ -25,11 +26,12 @@ const propRow = (p: Proposal, owner: string) => {
   return { id: p.id, owner_id: owner, title: p.title, client_name: p.client.name, value: p.value, currency: p.currency, stage: p.stage, data };
 };
 
-export async function runServerTool(name: string, a: Json): Promise<string> {
+/** `owner`: dono dos dados (login OAuth); sem ele usa MCP_OWNER_EMAIL / ADMIN_EMAILS (chave fixa MCP_TOKEN). */
+export async function runServerTool(name: string, a: Json, ownerOverride?: string): Promise<string> {
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL) throw new Error("XMEDIA ainda está em modo local (dados no navegador). Ligue o Supabase para usar o MCP.");
   const db = serviceClient();
-  const owner = await ownerId();
-  if (CLIENT_TOOL_NAMES.has(name)) return runClientTool(name, a, db, owner);
+  const owner = ownerOverride || (await ownerId());
+  if (CLIENT_TOOL_NAMES.has(name) || CONTENT_READ_TOOLS.has(name) || CONTENT_WRITE_TOOLS.has(name)) return runClientTool(name, a, db, owner);
 
   const invoices = async () => {
     const { data, error } = await db.from("invoices").select("id, data").eq("owner_id", owner).order("issue_date", { ascending: false });

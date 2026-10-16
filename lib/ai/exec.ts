@@ -10,6 +10,7 @@ import { projectStats } from "../util";
 import { serviceStore } from "../serviceStore";
 import { ToolInputError, applyItems, applyUpdate, buildNew, describeChange } from "./apply";
 import { PLAN_READ_TOOLS, PLAN_WRITE_TOOLS, preparePlanWrite, runPlanRead } from "./planTools";
+import { CONTENT_READ_TOOLS, CONTENT_WRITE_TOOLS, prepareContentWrite, runContentRead } from "./contentTools";
 import { SERVICE_READ_TOOLS, SERVICE_WRITE_TOOLS, prepareServiceWrite, runServiceRead, type CatalogChange } from "./serviceTools";
 
 type Json = Record<string, unknown>;
@@ -48,6 +49,7 @@ async function findInvoice(idOrNumber: unknown) {
 export async function runRead(name: string, input: Json): Promise<string> {
   if (SERVICE_READ_TOOLS.has(name)) return runServiceRead(name, input, await serviceStore.load());
   if (PLAN_READ_TOOLS.has(name)) return runPlanRead(name, input);
+  if (CONTENT_READ_TOOLS.has(name)) return runContentRead(name, input);
   if (name === "list_invoices") {
     const q = String(input.query ?? "").toLowerCase();
     const list = (await invoiceStore.list())
@@ -116,6 +118,7 @@ function slideLines(slides: { type: string; title?: string; number?: string }[])
 /** Ferramentas de escrita: calcula o resultado sem gravar (para o utilizador confirmar). */
 export async function prepareWrite(name: string, input: Json, today: string): Promise<PreparedWrite> {
   if (PLAN_WRITE_TOOLS.has(name)) return preparePlanWrite(name, input);
+  if (CONTENT_WRITE_TOOLS.has(name)) return prepareContentWrite(name, input);
   if (SERVICE_WRITE_TOOLS.has(name)) {
     const change = prepareServiceWrite(name, input, await serviceStore.load());
     return { name, lines: change.lines, commit: () => commitCatalog(change) };
