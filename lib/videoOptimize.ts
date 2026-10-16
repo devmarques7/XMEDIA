@@ -18,48 +18,65 @@ export function targetBitrate(maxBytes: number, seconds: number, audio = 128_000
 export async function optimizeVideo(file: File, maxBytes: number, onProgress?: (fraction: number) => void): Promise<OptimizeResult> {
   if (typeof VideoEncoder === "undefined") return { error: "cant_decode" };
   const mb = await import("mediabunny");
-  const input = new mb.Input({ source: new mb.BlobSource(file), formats: mb.ALL_FORMATS });
+  const open = () => new mb.Input({ source: new mb.BlobSource(file), formats: mb.ALL_FORMATS });
+
+  // 1) ler o vídeo uma vez: duração, tamanho e bitrate alvo
+  const probe = open();
+  let dims: { width: number } | { height: number };
+  let bitrate: number;
   try {
-    const track = await input.getPrimaryVideoTrack();
+    const track = await probe.getPrimaryVideoTrack();
     if (!track || !(await track.canDecode())) return { error: "cant_decode" };
-    const seconds = await input.computeDuration();
-    const bitrate = targetBitrate(maxBytes, seconds);
+    bitrate = targetBitrate(maxBytes, await probe.computeDuration());
     if (bitrate < 1_500_000) return { error: "too_long" }; // abaixo disto a qualidade fica fraca demais
     // lado maior até 1920 px (1080×1920 num reel); nunca aumenta
     const landscape = track.displayWidth >= track.displayHeight;
-    const dims = landscape ? { width: Math.min(1920, track.displayWidth) } : { height: Math.min(1920, track.displayHeight) };
-    const output = new mb.Output({ format: new mb.Mp4OutputFormat({ fastStart: "in-memory" }), target: new mb.BufferTarget() });
-    const conversion = await mb.Conversion.init({
-      input,
-      output,
-      video: { ...dims, codec: "avc", bitrate, forceTranscode: true, hardwareAcceleration: "prefer-hardware" },
-      audio: { codec: "aac", bitrate: 128_000 },
-    });
-    if (!conversion.isValid) return { error: "cant_decode" };
-    let last = Date.now();
-    conversion.onProgress = (p: number) => {
-      last = Date.now();
-      onProgress?.(p);
-    };
-    // vigia: se o browser deixar de converter, cancela e avisa em vez de ficar parado nos 0% para sempre
-    let stalled = false;
-    const watch = setInterval(() => {
-      if (Date.now() - last < STALL_MS) return;
-      stalled = true;
-      void conversion.cancel();
-    }, 5_000);
-    try {
-      await conversion.execute();
-    } catch (e) {
-      if (stalled) return { error: "stalled" };
-      throw e;
-    } finally {
-      clearInterval(watch);
-    }
-    const buf = output.target.buffer;
-    if (!buf) return { error: "cant_decode" };
-    return { file: new File([buf], file.name.replace(/\.[^.]+$/, "") + ".mp4", { type: "video/mp4" }) };
+    dims = landscape ? { width: Math.min(1920, track.displayWidth) } : { height: Math.min(1920, track.displayHeight) };
   } finally {
-    input.dispose?.();
+    probe.dispose?.();
   }
+
+  // 2) converter: primeiro com o hardware de vídeo; se encravar (acontece no Safari), repete por software
+  for (const hardwareAcceleration of ["prefer-hardware", "prefer-software"] as const) {
+    const input = open();
+    try {
+      const output = new mb.Output({ format: new mb.Mp4OutputFormat({ fastStart: "in-memory" }), target: new mb.BufferTarget() });
+      const conversion = await mb.Conversion.init({
+        input,
+        output,
+        video: { ...dims, codec: "avc", bitrate, forceTranscode: true, hardwareAcceleration },
+        audio: { codec: "aac", bitrate: 128_000 },
+      });
+      if (!conversion.isValid) return { error: "cant_decode" };
+      let last = Date.now();
+      conversion.onProgress = (p: number) => {
+        last = Date.now();
+        onProgress?.(p);
+      };
+      // vigia: se o browser deixar de converter, cancela em vez de ficar parado para sempre
+      let stalled = false;
+      const watch = setInterval(() => {
+        if (Date.now() - last < STALL_MS) return;
+        stalled = true;
+        void conversion.cancel();
+      }, 5_000);
+      try {
+        await conversion.execute();
+      } catch (e) {
+        if (stalled) {
+          onProgress?.(0);
+          continue; // próxima tentativa (ou "stalled" no fim)
+        }
+        throw e;
+      } finally {
+        clearInterval(watch);
+      }
+      const buf = output.target.buffer;
+      if (!buf) return { error: "cant_decode" };
+      return { file: new File([buf], file.name.replace(/\.[^.]+$/, "") + ".mp4", { type: "video/mp4" }) };
+    } finally {
+      input.dispose?.();
+    }
+  }
+  return { error: "stalled" };
 }
