@@ -14,9 +14,9 @@ import { useMemo, useState } from "react";
 import { AppShell } from "@/components/Shell";
 import { Tile } from "@/components/bento";
 import { Icon } from "@/components/Icon";
-import { Select } from "@/components/Select";
 import { Toast, useToast } from "@/components/ui";
 import { Avatar } from "@/components/team/Avatar";
+import { AssigneePicker } from "@/components/team/Assignees";
 import { TaskKanban } from "@/components/team/TaskKanban";
 import { WorkloadGrid } from "@/components/team/Workload";
 import { TodayList } from "@/components/team/TodayList";
@@ -71,7 +71,6 @@ export default function StudioPage() {
   const notes = unresolved(posts);
   const today = ymd(new Date());
   const name = (id: string) => customers.find((c) => c.id === id);
-  const person = (e?: string) => S.people.find((p) => p.email === (e ?? "").toLowerCase());
   const videos = (onlyStalled ? stalledList : inProd).sort((a, b) => (deadline(a, S.settings.process).due || "9").localeCompare(deadline(b, S.settings.process).due || "9"));
 
   // avaliação mensal: quem pode receber agora
@@ -193,7 +192,6 @@ export default function StudioPage() {
               const d = deadline(p, S.settings.process);
               const cs = commentStats(p);
               const isStalled = stalled(p, S.settings.process);
-              const who = person(p.assignee);
               return (
                 <article key={p.id} className={`st-video ${isStalled ? "late" : ""}`} data-testid="st-video">
                   <Avatar name={c?.name ?? "?"} photo={c?.cover || c?.instagram.picture} size={34} />
@@ -212,15 +210,7 @@ export default function StudioPage() {
                   )}
                   {isStalled && <span className="label tone-danger">{t("st.stalled")}</span>}
                   <span className="st-who">
-                    {who && <Avatar name={who.name} photo={who.photo} size={24} />}
-                    <Select className="select" value={(p.assignee ?? "").toLowerCase()} onChange={(e) => S.savePost({ ...p, assignee: e.target.value || undefined })} aria-label={t("st.assignTo")}>
-                      <option value="">{t("st.nobody")}</option>
-                      {S.people.map((x) => (
-                        <option key={x.email} value={x.email}>
-                          {x.name}
-                        </option>
-                      ))}
-                    </Select>
+                    <AssigneePicker value={p.assignee} people={S.people} size={24} label={t("st.assignTo")} onChange={(e) => S.savePost({ ...p, assignee: e })} />
                   </span>
                 </article>
               );

@@ -7,6 +7,7 @@ import { Icon } from "@/components/Icon";
 import { useMenu } from "@/components/LangMenu";
 import { useT } from "@/lib/i18n";
 import type { Person } from "@/lib/studio";
+import { PlusIcon } from "lucide-react";
 import { Avatar } from "./Avatar";
 
 export function Assignees({ value, people, onChange, size = 22, labeled }: { value: string[]; people: Person[]; onChange: (emails: string[]) => void; size?: number; /** Mostra os nomes (mais claro numa lista). */ labeled?: boolean }) {
@@ -74,6 +75,100 @@ export function Assignees({ value, people, onChange, size = 22, labeled }: { val
               if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return;
               onChange([...list.filter((x) => x !== v), v]);
               setEmail("");
+            }}
+          >
+            <input className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("asg.addPh")} aria-label={t("asg.addPh")} />
+            <button className="btn small" aria-label={t("asg.add")}>
+              <Icon name="plus" size={13} />
+            </button>
+          </form>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Responsável ÚNICO (tarefas, conteúdos, regras): grupo de avatares como no shadcn (AvatarGroup + AvatarGroupCount com
+ * PlusIcon) — o avatar de quem é responsável e um "+" que abre a equipa para escolher. Escolher fecha o menu.
+ */
+export function AssigneePicker({
+  value,
+  people,
+  onChange,
+  size = 26,
+  allowNone = true,
+  label,
+}: {
+  value?: string;
+  people: { email: string; name: string; photo?: string; role?: string }[];
+  onChange: (email: string | undefined) => void;
+  size?: number;
+  /** "Sem responsável" (as regras de automação exigem alguém). */
+  allowNone?: boolean;
+  label?: string;
+}) {
+  const { t } = useT();
+  const { open, setOpen, ref } = useMenu();
+  const [email, setEmail] = useState("");
+  const cur = (value ?? "").toLowerCase();
+  const person = (e: string) => people.find((p) => p.email.toLowerCase() === e) ?? { email: e, name: e.split("@")[0], photo: "", role: "" };
+  const who = cur ? person(cur) : null;
+  const pick = (e: string | undefined) => {
+    onChange(e);
+    setOpen(false);
+  };
+  const list = [...people, ...(cur && !people.some((p) => p.email.toLowerCase() === cur) ? [person(cur)] : [])];
+
+  return (
+    <div className="menuwrap asg asg1" ref={ref} data-no-drag onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
+      <button
+        type="button"
+        className="asg1-group"
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={`${label ?? t("asg.title")}: ${who?.name ?? t("st.nobody")}`}
+        title={who ? `${who.name}${who.role ? ` · ${who.role}` : ""}` : t("st.nobody")}
+        data-testid="asg1"
+      >
+        {who && <Avatar name={who.name} photo={who.photo} size={size} />}
+        <span className="asg1-count" style={{ width: size, height: size }} aria-hidden>
+          <PlusIcon size={Math.round(size * 0.5)} strokeWidth={2} />
+        </span>
+      </button>
+      {open && (
+        <div className="menu asg-menu" role="menu">
+          <span className="tile-t" style={{ padding: "4px 8px" }}>
+            {label ?? t("asg.title")}
+          </span>
+          {list.map((p) => (
+            <button key={p.email} role="menuitemradio" aria-checked={cur === p.email.toLowerCase()} onClick={() => pick(p.email.toLowerCase())} data-testid="asg1-opt">
+              <Avatar name={p.name} photo={p.photo} size={20} /> <span className="asg-name">{p.name}</span>
+              {p.role && <span className="label muted">{p.role}</span>}
+              {cur === p.email.toLowerCase() && (
+                <span className="menu-check">
+                  <Icon name="check" size={14} />
+                </span>
+              )}
+            </button>
+          ))}
+          {allowNone && cur && (
+            <button role="menuitemradio" aria-checked={false} onClick={() => pick(undefined)} data-testid="asg1-none">
+              <span className="asg-empty" style={{ width: 20, height: 20 }}>
+                <Icon name="close" size={11} />
+              </span>
+              <span className="asg-name">{t("st.nobody")}</span>
+            </button>
+          )}
+          <form
+            className="asg-add"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const v = email.trim().toLowerCase();
+              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return;
+              setEmail("");
+              pick(v);
             }}
           >
             <input className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t("asg.addPh")} aria-label={t("asg.addPh")} />

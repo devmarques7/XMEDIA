@@ -7,7 +7,7 @@
 import { useState } from "react";
 import { Icon } from "@/components/Icon";
 import { Select } from "@/components/Select";
-import { Avatar } from "@/components/team/Avatar";
+import { AssigneePicker } from "@/components/team/Assignees";
 import { BoardCard } from "@/components/customer/ContentBoard";
 import { PostThumb, StatusLabel, TypeIcon } from "@/components/customer/parts";
 import type { useStudio } from "@/components/team/useStudio";
@@ -74,24 +74,12 @@ export function Materials({
   const live = all.filter((p) => phaseOf(p) !== "published");
   const list = (isLoose ? all : live.filter((p) => matOf(p) === mat)).sort((a, b) => (deadline(a, S.settings.process).due || "9").localeCompare(deadline(b, S.settings.process).due || "9"));
   const count = (k: Mat) => live.filter((p) => matOf(p) === k).length;
-  const person = (e?: string) => S.people.find((p) => p.email === (e ?? "").toLowerCase());
 
-  const assignSelect = (p: ContentPost) => {
-    const who = person(p.assignee);
-    return (
-      <span className="st-mat-who" onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()} data-no-drag>
-        {who ? <Avatar name={who.name} photo={who.photo} size={22} /> : <Icon name="user" size={14} />}
-        <Select className="select" value={(p.assignee ?? "").toLowerCase()} onChange={(e) => (isLoose ? saveLoose({ ...p, assignee: e.target.value || undefined }) : S.savePost({ ...p, assignee: e.target.value || undefined }))} aria-label={t("st.assignTo")} data-testid="st-mat-assign">
-          <option value="">{t("st.nobody")}</option>
-          {S.people.map((x) => (
-            <option key={x.email} value={x.email}>
-              {x.name}
-            </option>
-          ))}
-        </Select>
-      </span>
-    );
-  };
+  const assignSelect = (p: ContentPost) => (
+    <span className="st-mat-who" data-no-drag data-testid="st-mat-assign">
+      <AssigneePicker value={p.assignee} people={S.people} size={22} label={t("st.assignTo")} onChange={(e) => (isLoose ? saveLoose({ ...p, assignee: e }) : S.savePost({ ...p, assignee: e }))} />
+    </span>
+  );
 
   // ---------- rascunhos sem cliente ----------
   async function saveLoose(p: ContentPost) {

@@ -12,7 +12,7 @@ import { newTask } from "@/lib/tasks";
 import { taskOwner, weekDays, weekOf, ymd, type StudioTask } from "@/lib/studio";
 import { COMPANY, autoPlan, byRank, dueTag, reorder, type PlanRange, isInternal, mine, suggestions, todayTasks, type Bucket, type TodayTask } from "@/lib/today";
 import { Avatar } from "./Avatar";
-import { Assignees } from "./Assignees";
+import { AssigneePicker } from "./Assignees";
 import { TodayCalendar } from "./TodayCalendar";
 import { CapacityBar } from "./Capacity";
 import { Select } from "@/components/Select";
@@ -267,7 +267,7 @@ export function TodayList({ S, compact, max = 8, clientId }: { S: S; compact?: b
           </span>
         )}
         {!compact ? (
-          <Assignees labeled value={owners} people={S.people} onChange={(list) => S.saveTask({ ...x.t, assignee: list[0] || undefined, mentions: list })} />
+          <AssigneePicker value={owners[0]} people={S.people} onChange={(e) => S.saveTask({ ...x.t, assignee: e, mentions: [...new Set([...(e ? [e] : []), ...x.t.mentions.filter((m) => m.toLowerCase() !== (x.t.assignee ?? "").toLowerCase())])] })} />
         ) : (
           owners[0] && <Avatar name={person(owners[0])?.name ?? owners[0]} photo={person(owners[0])?.photo} size={22} />
         )}
