@@ -42,6 +42,13 @@ export const isPending = (src: string | undefined) => !!src && src.startsWith("p
 /** Pré-visualização local de um ficheiro ainda a subir (só neste browser). */
 export const previewOf = (src: string) => previews.get(src) ?? null;
 export const hasPending = (p: Pick<ContentPost, "media" | "cover">) => isPending(p.cover) || p.media.some((m) => isPending(m.src));
+/** "pending:" sem envio a correr neste browser (aba fechada/recarregada a meio): o ficheiro nunca vai chegar. */
+export const isOrphanPending = (src: string | undefined) => isPending(src) && !previews.has(src!);
+/** Retira os envios órfãos; devolve o mesmo objeto se não houver nenhum. */
+export function dropOrphans<T extends Pick<ContentPost, "media" | "cover">>(p: T): T {
+  if (!isOrphanPending(p.cover) && !p.media.some((m) => isOrphanPending(m.src))) return p;
+  return { ...p, cover: isOrphanPending(p.cover) ? "" : p.cover, media: p.media.filter((m) => !isOrphanPending(m.src)) };
+}
 
 export function useUploadJobs() {
   return useSyncExternalStore(

@@ -11,7 +11,7 @@ import { useT, type Key } from "@/lib/i18n";
 import { kindOf, mergeMedia } from "@/lib/uploadRules";
 import { DropZone } from "@/components/DropZone";
 import { UploadJobRow, uploadErrorText } from "@/components/UploadTray";
-import { applyUploads, dropPending, hasPending, isPending, startUpload, useUploadJobs, type UploadDone, type UploadFailed } from "@/lib/uploadQueue";
+import { applyUploads, dropOrphans, dropPending, hasPending, isPending, startUpload, useUploadJobs, type UploadDone, type UploadFailed } from "@/lib/uploadQueue";
 import { Cover, StatusLabel, TypeIcon, Video, useWhen } from "./parts";
 import { Review } from "./Review";
 import { IgPreview } from "./IgPreview";
@@ -58,16 +58,22 @@ export function PostEditor({
 }) {
   const { t } = useT();
   const when = useWhen();
-  const [p, setP] = useState(post);
+  // envio interrompido noutra sessão (aba fechada a meio): o ficheiro não existe — retira-o e pede para carregar de novo
+  const [p, setP] = useState(() => dropOrphans(post));
   const [busy, setBusy] = useState<string | null>(null);
   const [reply, setReply] = useState("");
-  const [err, setErr] = useState("");
+  const [err, setErr] = useState(() => (dropOrphans(post) !== post ? t("pe.orphanUpload") : ""));
   const [overAll, setOverAll] = useState(false);
   const overTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [drag, setDrag] = useState<number | null>(null);
   const [dragTo, setDragTo] = useState<number | null>(null);
   const [view, setView] = useState<"details" | "review">(openNotes(post).length ? "review" : "details");
-  useEffect(() => setP(post), [post]);
+  useEffect(() => {
+    const clean = dropOrphans(post);
+    setP(clean);
+    if (clean !== post) setErr(t("pe.orphanUpload"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [post]);
   const set = (patch: Partial<ContentPost>) => setP((x) => ({ ...x, ...patch }));
 
   useEffect(() => {
