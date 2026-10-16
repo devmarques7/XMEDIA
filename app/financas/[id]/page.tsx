@@ -194,11 +194,11 @@ export default function InvoiceEditor() {
           <Sec n={1} title={t("fin.sec.client")}>
             <label className="field">
               <span>{t("fin.client.name")}</span>
-              <input className="input big" value={inv.client.name} onChange={(e) => setClient("name", e.target.value)} placeholder="WE ARE SANCTUM LTD." />
+              <AutoText className="input big" value={inv.client.name} onChange={(v) => setClient("name", v)} placeholder="WE ARE SANCTUM LTD." />
             </label>
             <label className="field">
               <span>{t("fin.client.address")}</span>
-              <textarea className="textarea" rows={2} value={inv.client.address} onChange={(e) => setClient("address", e.target.value)} />
+              <AutoText multiline minRows={2} className="textarea" value={inv.client.address} onChange={(v) => setClient("address", v)} />
             </label>
             <div className="grid3">
               <label className="field">
@@ -214,7 +214,7 @@ export default function InvoiceEditor() {
                 <span>{t("fin.client.vat")}</span>
                 <input className="input" value={inv.client.vat} onChange={(e) => setClient("vat", e.target.value)} />
               </label>
-              <label className="field">
+              <label className="field span-all">
                 <span>{t("fin.client.email")}</span>
                 <input className="input" type="email" value={inv.client.email} onChange={(e) => setClient("email", e.target.value)} />
               </label>
@@ -347,10 +347,22 @@ export default function InvoiceEditor() {
               </div>
               {tt.lines.map((l) => (
                 <div key={l.id} className="items-row">
-                  <input className="input" aria-label={t("fin.item.desc")} placeholder="® [MM] …" value={l.description} onChange={(e) => setItem(l.id, { description: e.target.value })} />
-                  <input className="input" aria-label={t("fin.item.qty")} inputMode="decimal" defaultValue={l.qty} onChange={(e) => setItem(l.id, { qty: num(e.target.value) })} />
-                  <input className="input" aria-label={t("fin.item.rate")} inputMode="decimal" defaultValue={l.rate} onChange={(e) => setItem(l.id, { rate: num(e.target.value) })} />
-                  <span className="mono r small">{money(l.subtotal, inv.currency)}</span>
+                  <label className="items-cell desc">
+                    <span className="items-lab">{t("fin.item.desc")}</span>
+                    <AutoText className="input" aria-label={t("fin.item.desc")} placeholder="® [MM] …" value={l.description} onChange={(v) => setItem(l.id, { description: v })} />
+                  </label>
+                  <label className="items-cell">
+                    <span className="items-lab">{t("fin.item.qty")}</span>
+                    <input className="input" aria-label={t("fin.item.qty")} inputMode="decimal" defaultValue={l.qty} onChange={(e) => setItem(l.id, { qty: num(e.target.value) })} />
+                  </label>
+                  <label className="items-cell">
+                    <span className="items-lab">{t("fin.item.rate")}</span>
+                    <input className="input" aria-label={t("fin.item.rate")} inputMode="decimal" defaultValue={l.rate} onChange={(e) => setItem(l.id, { rate: num(e.target.value) })} />
+                  </label>
+                  <span className="items-cell sub">
+                    <span className="items-lab">{t("fin.item.subtotal")}</span>
+                    <span className="mono r small">{money(l.subtotal, inv.currency)}</span>
+                  </span>
                   <button className="btn ghost small" aria-label={t("remove")} onClick={() => update((x) => ({ ...x, items: x.items.filter((i) => i.id !== l.id) }))}>
                     <Icon name="close" size={14} />
                   </button>
@@ -391,7 +403,7 @@ export default function InvoiceEditor() {
 
           {/* 05 nota */}
           <Sec n={5} title={t("fin.sec.note")}>
-            <textarea className="textarea" rows={4} value={inv.note} placeholder={t("fin.notePh")} onChange={(e) => set("note", e.target.value)} />
+            <AutoText multiline minRows={4} className="textarea" value={inv.note} placeholder={t("fin.notePh")} onChange={(v) => set("note", v)} />
           </Sec>
 
           {/* 06 pagamento */}
@@ -424,7 +436,7 @@ export default function InvoiceEditor() {
             </div>
             <label className="field">
               <span>{t("fin.cover.text")}</span>
-              <textarea className="textarea" rows={3} value={inv.cover.text} onChange={(e) => update((x) => ({ ...x, cover: { ...x.cover, text: e.target.value } }))} />
+              <AutoText multiline minRows={3} className="textarea" value={inv.cover.text} onChange={(v) => update((x) => ({ ...x, cover: { ...x.cover, text: v } }))} />
             </label>
           </Sec>
 
@@ -484,5 +496,36 @@ function Sec({ n, title, right, children }: { n: number; title: string; right?: 
       </div>
       {children}
     </section>
+  );
+}
+
+/** Texto que cresce em altura: nunca fica cortado (uma linha para nome/descrição; `multiline` para morada, nota…). */
+function AutoText({ value, onChange, className, placeholder, "aria-label": aria, multiline, minRows = 1 }: { value: string; onChange: (v: string) => void; className?: string; placeholder?: string; "aria-label"?: string; multiline?: boolean; minRows?: number }) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  const fit = () => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${el.scrollHeight + 2}px`;
+  };
+  useEffect(fit, [value]);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(fit); // a largura muda → volta a medir
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return (
+    <textarea
+      ref={ref}
+      rows={minRows}
+      className={`${className ?? ""} autotext`}
+      value={value}
+      placeholder={placeholder}
+      aria-label={aria}
+      onChange={(e) => onChange(multiline ? e.target.value : e.target.value.replace(/\n/g, " "))}
+      onKeyDown={(e) => !multiline && e.key === "Enter" && e.preventDefault()}
+    />
   );
 }
