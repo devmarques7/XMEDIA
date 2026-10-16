@@ -3568,3 +3568,25 @@ button.fin-tile:hover, button.fin-tile[aria-pressed="true"] { border-color: var(
 .sb-iconbtn.sb-toggle { display: grid; flex: none; }
 .page-back { display: flex; align-items: center; gap: 8px; margin: 2px 0 6px; }
 .page-back .btn { padding-left: 0; }
+
+/* Menu de clique direito (padrão shadcn/ui sobre Radix) */
+.cm { z-index: 210; min-width: 210px; padding: 5px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--fg); box-shadow: 0 16px 44px rgba(0, 0, 0, .22); animation: tt-in .12s ease-out; }
+.cm-item { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px; font-size: 13.5px; cursor: pointer; outline: none; user-select: none; }
+.cm-item[data-highlighted] { background: var(--panel-2); }
+.cm-item.danger { color: var(--danger, #e5484d); }
+.cm-ic { display: inline-grid; place-items: center; width: 16px; color: var(--muted); }
+.cm-item.danger .cm-ic { color: inherit; }
+.cm-t { flex: 1; }
+.cm-k { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+.cm-sep { height: 1px; margin: 4px 2px; background: var(--line); }
+.cm-label { padding: 6px 10px 4px; font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+/* Ficha do cliente: estado como etiqueta pequena; ações numa linha; abas fixadas */
+.stage-tag { position: relative; display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px; font-family: var(--mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); cursor: pointer; margin-bottom: 6px; }
+.stage-tag:hover { border-color: var(--fg); color: var(--fg); }
+.stage-tag select { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.cu-head { flex-wrap: nowrap; align-items: flex-end; }
+.cu-actions { flex-wrap: nowrap; gap: 8px; flex: none; }
+.tab.pinned { font-weight: 600; }
+.tab-pin { margin-right: 4px; color: var(--accent); vertical-align: -1px; }
+@media (max-width: 760px) { .cu-head { flex-wrap: wrap; } .cu-actions { flex-wrap: wrap; } }

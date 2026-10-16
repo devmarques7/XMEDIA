@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.132.1",
+    "@radix-ui/react-context-menu": "^2.2.16",
     "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@react-pdf/renderer": "^4.9.0",
